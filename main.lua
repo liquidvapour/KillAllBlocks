@@ -23,7 +23,8 @@ local world = bump.newWorld()
 
 
 -- Player functions
-local player = { l=50,t=50,w=20,h=20, velocity = vector(160, 135), acceleration = 80 }
+local player = { l=50,t=50,w=20,h=20, velocity = vector(260, 70), acceleration = 80 }
+local blocks = {}
 
 local function updatePlayer(dt)
   
@@ -40,7 +41,7 @@ local function updatePlayer(dt)
       player.l, player.t = future_l, future_t
       world:move(player, future_l, future_t)
     else
-      local col, tl, tt, sl, st
+      local col, tl, tt, bl, bt
       while len > 0 do
         col = cols[1]
         tl,tt,_,_,bl,bt = col:getBounce()
@@ -56,6 +57,17 @@ local function updatePlayer(dt)
         b = vector(bl, bt)
         dir = b - a
         player.velocity = dir:normalized() * player.velocity:len()
+        
+        if col.other and col.other.tag ~= "side" then
+            for key, value in pairs(blocks) do
+                if value == col.other then
+                    table.remove(blocks, key)
+                end 
+            end
+            
+            world:remove(col.other)
+            
+        end
       end
     end
   end
@@ -67,10 +79,9 @@ end
 
 -- Block functions
 
-local blocks = {}
 
-local function addBlock(l,t,w,h)
-  local block = {l=l,t=t,w=w,h=h}
+local function addBlock(l,t,w,h, tag)
+  local block = {l=l,t=t,w=w,h=h,tag=tag}
   blocks[#blocks+1] = block
   world:add(block, l,t,w,h)
 end
@@ -100,10 +111,10 @@ end
 function love.load()
   world:add(player, player.l, player.t, player.w, player.h)
 
-  addBlock(0,       0,     800, 32)
-  addBlock(0,      32,      32, 600-32*2)
-  addBlock(800-32, 32,      32, 600-32*2)
-  addBlock(0,      600-32, 800, 32)
+  addBlock(0,       0,     800, 32, "side")
+  addBlock(0,      32,      32, 600-32*2, "side")
+  addBlock(800-32, 32,      32, 600-32*2, "side")
+  addBlock(0,      600-32, 800, 32, "side")
 
   for i=1,30 do
     addBlock( math.random(100, 600),
