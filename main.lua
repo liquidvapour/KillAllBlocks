@@ -23,7 +23,7 @@ local world = bump.newWorld()
 
 
 -- Player functions
-local player = { l=50,t=50,w=20,h=20, velocity = vector(50, 50), acceleration = 80 }
+local player = { l=50,t=50,w=20,h=20, velocity = vector(160, 135), acceleration = 80 }
 
 local function updatePlayer(dt)
   
@@ -43,14 +43,19 @@ local function updatePlayer(dt)
       local col, tl, tt, sl, st
       while len > 0 do
         col = cols[1]
-        tl,tt,_,_,sl,st = col:getSlide()
+        tl,tt,_,_,bl,bt = col:getBounce()
         player.l, player.t = tl, tt
         world:move(player, tl, tt)
-        cols, len = world:check(player, sl, st)
+        cols, len = world:check(player, bl, bt)
         if len == 0 then
-          player.l, player.t = sl, st
-          world:move(player, sl, st)
+          player.l, player.t = bl, bt
+          world:move(player, bl, bt)
         end
+        
+        a = vector(tl, tt)
+        b = vector(bl, bt)
+        dir = b - a
+        player.velocity = dir:normalized() * player.velocity:len()
       end
     end
   end
