@@ -23,9 +23,9 @@ local world = bump.newWorld()
 
 
 -- Player functions
-local player = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), acceleration = 80, inplay = true }
+local ball = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), speed = 300, inplay = true }
 
-function player:moveTo(l, t)
+function ball:moveTo(l, t)
     self.l, self.t = l, t
     world:move(self, l, t)
 end
@@ -55,8 +55,9 @@ local function updatePaddle(dt)
 
     if currentState == "onGoal" and love.keyboard.isDown('up') then
         currentState = "playing"
-        --player.velocity.x, player.velocity.y = 50, -267
-        player.velocity = player.velocity * -1
+        --ball.velocity.x, ball.velocity.y = 50, -267
+        local dir = vector(0 + (math.random() *0.2), 1):normalized()
+        ball.velocity = dir * ball.speed
     end
 
     
@@ -64,37 +65,59 @@ local function updatePaddle(dt)
     world:move(paddle, paddle.l, paddle.t)
 end
 
+function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
+
 local function updatePlayer(dt)
   
-  --player.velocity = player.velocity * player.acceleration * dt
+  --ball.velocity = ball.velocity * ball.acceleration * dt
      
-  local dx = player.velocity.x * dt
-  local dy = player.velocity.y * dt
+  local dx = ball.velocity.x * dt
+  local dy = ball.velocity.y * dt
   
   if dx ~= 0 or dy ~= 0 then
-    local future_l, future_t = player.l + dx, player.t + dy
-    local cols, len = world:check(player, future_l, future_t)
+    local future_l, future_t = ball.l + dx, ball.t + dy
+    local cols, len = world:check(ball, future_l, future_t)
     if len == 0 then
-      player.l, player.t = future_l, future_t
-      world:move(player, future_l, future_t)
+      ball.l, ball.t = future_l, future_t
+      world:move(ball, future_l, future_t)
     else
       local col, tl, tt, bl, bt
       while len > 0 do
         col = cols[1]
         
+        
+        local hitPaddle = col.other == paddle
+        
         tl,tt,_,_,bl,bt = col:getBounce()
-        player.l, player.t = tl, tt
-        world:move(player, tl, tt)
-        cols, len = world:check(player, bl, bt)
+        ball:moveTo(tl, tt)
+        
+        cols, len = world:check(ball, bl, bt)
         if len == 0 then
-          player.l, player.t = bl, bt
-          world:move(player, bl, bt)
+          ball.l, ball.t = bl, bt
+          world:move(ball, bl, bt)
         end
         
         a = vector(tl, tt)
         b = vector(bl, bt)
         dir = b - a
-        player.velocity = dir:normalized() * player.velocity:len()
+        dir = dir:normalized()
+        
+        if hitPaddle then
+            local playerCenterX = tl + (ball.w / 2)
+            print("playerCenterX: "..playerCenterX)
+            local paddleCenterX = paddle.l + (paddle.w / 2)            
+            print("paddle.w: "..paddle.w)
+            print("paddleCenterX: "..paddleCenterX)
+            local collisionCenter = paddleCenterX - playerCenterX
+            print("collisionCenter: "..collisionCenter)
+            local offset = -(collisionCenter / (paddle.w/2))
+            offset = math.clamp(-1, offset, 1)
+            print("offset: "..offset)
+            dir = vector(offset, -1.0):normalized()
+            print("dir.x: "..dir.x..",y: "..dir.y)
+        end
+        
+        ball.velocity = dir * ball.velocity:len()
        
         if col.other == goal then
             currentState = "onGoal"
@@ -111,12 +134,12 @@ end
 
 local function updatePlayerOnPaddle(dt)
     local pl, pt = paddle.l, paddle.t
-    player:moveTo(pl + (paddle.w / 2) - (player.w / 2), pt - (player.h + 1))
+    ball:moveTo(pl + (paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
 
 
 local function drawPlayer()
-    drawBox(player, 0, 255, 0)
+    drawBox(ball, 0, 255, 0)
 end
 
 -- Block functions
@@ -152,7 +175,7 @@ end
 
 
 function love.load()
-  world:add(player, player.l, player.t, player.w, player.h)
+  world:add(ball, ball.l, ball.t, ball.w, ball.h)
 
   addBlock(0,       0,     800, 32, "side")
   addBlock(0,      32,      32, 600-32*2, "side")
@@ -160,7 +183,7 @@ function love.load()
   
   paddle = addBlock(350,      600-32, 100, 16, "side")
   paddle.velocityX = 0;
-  paddle.speed = 250;
+  paddle.speed = 700;
   
   goal = addBlock(0, 600-16, 800, 16, "side")
 
@@ -177,14 +200,14 @@ function love.load()
   playerStates.playing = updatePlayer
   playerStates.onGoal = updatePlayerOnPaddle
   
-  currentState = "playing"
+  currentState = "onGoal"
 end
 
 
 
 function love.update(dt)
-    playerStates[currentState](dt)
     updatePaddle(dt)
+    playerStates[currentState](dt)
 end
 
 function love.draw()
