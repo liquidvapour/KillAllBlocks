@@ -23,14 +23,40 @@ local world = bump.newWorld()
 
 
 -- Player functions
-local player = { l=50,t=50,w=20,h=20, velocity = vector(260, 70), acceleration = 80 }
+local player = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), acceleration = 80, inplay = true }
+
 local blocks = {}
+local paddle 
+local goal
+local hitGoal = false
+
+local function removeItemFrom(tbl, item)
+    for key, value in pairs(tbl) do
+        if value == item then
+            table.remove(tbl, key)
+        end 
+    end
+end
+
+local function updatePaddle(dt)
+    local dx, dy = 0, 0
+    if love.keyboard.isDown('right') then
+        dx = paddle.speed * dt
+    elseif love.keyboard.isDown('left') then
+        dx = -paddle.speed * dt
+    end
+    
+    paddle.l = paddle.l + dx
+    world:move(paddle, paddle.l, paddle.t)
+end
 
 local function updatePlayer(dt)
   
   --player.velocity = player.velocity * player.acceleration * dt
   
   
+    if not player.inplay then return end
+    
   local dx = player.velocity.x * dt
   local dy = player.velocity.y * dt
   
@@ -44,6 +70,7 @@ local function updatePlayer(dt)
       local col, tl, tt, bl, bt
       while len > 0 do
         col = cols[1]
+        
         tl,tt,_,_,bl,bt = col:getBounce()
         player.l, player.t = tl, tt
         world:move(player, tl, tt)
@@ -57,24 +84,26 @@ local function updatePlayer(dt)
         b = vector(bl, bt)
         dir = b - a
         player.velocity = dir:normalized() * player.velocity:len()
+       
+        if col.other == goal then
+            player.inplay = false
+        end
         
-        if col.other and col.other.tag ~= "side" then
-            for key, value in pairs(blocks) do
-                if value == col.other then
-                    table.remove(blocks, key)
-                end 
-            end
-            
+        if col.other.tag ~= "side" then
+            removeItemFrom(blocks, col.other)
             world:remove(col.other)
-            
         end
       end
     end
   end
 end
 
+
+
 local function drawPlayer()
-  drawBox(player, 0, 255, 0)
+    if player.inplay then
+        drawBox(player, 0, 255, 0)
+    end
 end
 
 -- Block functions
@@ -84,6 +113,7 @@ local function addBlock(l,t,w,h, tag)
   local block = {l=l,t=t,w=w,h=h,tag=tag}
   blocks[#blocks+1] = block
   world:add(block, l,t,w,h)
+  return block
 end
 
 local function drawBlocks()
@@ -114,8 +144,15 @@ function love.load()
   addBlock(0,       0,     800, 32, "side")
   addBlock(0,      32,      32, 600-32*2, "side")
   addBlock(800-32, 32,      32, 600-32*2, "side")
-  addBlock(0,      600-32, 800, 32, "side")
+  
+  paddle = addBlock(350,      600-32, 100, 16, "side")
+  paddle.velocityX = 0;
+  paddle.speed = 250;
+  
+  goal = addBlock(0, 600-16, 800, 16, "side")
 
+  math.randomseed(os.time())
+  
   for i=1,30 do
     addBlock( math.random(100, 600),
               math.random(100, 400),
@@ -127,6 +164,7 @@ end
 
 function love.update(dt)
   updatePlayer(dt)
+  updatePaddle(dt)
 end
 
 function love.draw()
