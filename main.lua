@@ -25,10 +25,17 @@ local world = bump.newWorld()
 -- Player functions
 local player = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), acceleration = 80, inplay = true }
 
+function player:moveTo(l, t)
+    self.l, self.t = l, t
+    world:move(self, l, t)
+end
+
 local blocks = {}
 local paddle 
 local goal
 local hitGoal = false
+local playerStates = {}
+local currentState
 
 local function removeItemFrom(tbl, item)
     for key, value in pairs(tbl) do
@@ -45,6 +52,13 @@ local function updatePaddle(dt)
     elseif love.keyboard.isDown('left') then
         dx = -paddle.speed * dt
     end
+
+    if currentState == "onGoal" and love.keyboard.isDown('up') then
+        currentState = "playing"
+        --player.velocity.x, player.velocity.y = 50, -267
+        player.velocity = player.velocity * -1
+    end
+
     
     paddle.l = paddle.l + dx
     world:move(paddle, paddle.l, paddle.t)
@@ -53,10 +67,7 @@ end
 local function updatePlayer(dt)
   
   --player.velocity = player.velocity * player.acceleration * dt
-  
-  
-    if not player.inplay then return end
-    
+     
   local dx = player.velocity.x * dt
   local dy = player.velocity.y * dt
   
@@ -86,7 +97,7 @@ local function updatePlayer(dt)
         player.velocity = dir:normalized() * player.velocity:len()
        
         if col.other == goal then
-            player.inplay = false
+            currentState = "onGoal"
         end
         
         if col.other.tag ~= "side" then
@@ -98,12 +109,14 @@ local function updatePlayer(dt)
   end
 end
 
+local function updatePlayerOnPaddle(dt)
+    local pl, pt = paddle.l, paddle.t
+    player:moveTo(pl + (paddle.w / 2) - (player.w / 2), pt - (player.h + 1))
+end
 
 
 local function drawPlayer()
-    if player.inplay then
-        drawBox(player, 0, 255, 0)
-    end
+    drawBox(player, 0, 255, 0)
 end
 
 -- Block functions
@@ -160,11 +173,18 @@ function love.load()
               math.random(10, 100)
     )
   end
+  
+  playerStates.playing = updatePlayer
+  playerStates.onGoal = updatePlayerOnPaddle
+  
+  currentState = "playing"
 end
 
+
+
 function love.update(dt)
-  updatePlayer(dt)
-  updatePaddle(dt)
+    playerStates[currentState](dt)
+    updatePaddle(dt)
 end
 
 function love.draw()
@@ -179,4 +199,4 @@ function love.keypressed(k)
   if k=="escape" then love.event.quit() end
   if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
   if k=="delete" then collectgarbage("collect") end
-end
+    end
