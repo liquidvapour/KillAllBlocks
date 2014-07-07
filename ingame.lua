@@ -3,6 +3,7 @@ local Game = require "game"
 local bump = require 'bump'
 local bump_debug = require 'bump_debug'
 local vector = require 'hump.vector'
+local timer = require 'hump.timer'
 
 local ingame = Game:addState("ingame")
 
@@ -28,7 +29,12 @@ local world = bump.newWorld()
 
 
 -- ball functions
-local ball = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), speed = 300, inplay = true, currentState = "onGoal" }
+local ball = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), speed = 300, inplay = true, currentState = "onGoal",
+    r = 255, g = 0, b = 0}
+
+function ball:setCurrentState(state)
+    self.currentState = state
+end
 
 function ball:moveTo(l, t)
     self.l, self.t = l, t
@@ -50,9 +56,11 @@ local function removeItemFrom(tbl, item)
     end
 end
 
-
+local ready = false
 
 local function updatePaddle(dt)
+    if not ready then return end
+
     local dx, dy = 0, 0
     if love.keyboard.isDown('right') then
         dx = paddle.speed * dt
@@ -61,13 +69,12 @@ local function updatePaddle(dt)
     end
 
     if ball.currentState == "onGoal" and love.keyboard.isDown(' ') then        
-        ball.currentState = "playing"
+        ball:setCurrentState("playing")
         --ball.velocity.x, ball.velocity.y = 50, -267
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
         ball.velocity = dir * ball.speed
     end
 
-    
     paddle.l = paddle.l + dx
     world:move(paddle, paddle.l, paddle.t)
 end
@@ -121,7 +128,7 @@ local function updatePlayer(dt)
         ball.velocity = dir * ball.velocity:len()
        
         if col.other == goal then
-            ball.currentState = "onGoal"
+            ball:setCurrentState("onGoal")
         end
         
         if col.other.tag ~= "side" then
@@ -140,7 +147,7 @@ end
 
 
 local function drawPlayer()
-    drawBox(ball, 0, 255, 0)
+    drawBox(ball, ball.r, ball.g, ball.b)
 end
 
 -- Block functions
@@ -201,12 +208,18 @@ function ingame:enteredState()
   playerStates.playing = updatePlayer
   playerStates.onGoal = updatePlayerOnPaddle
   
-  ball.currentState = "onGoal"
+  ball:setCurrentState("onGoal")
   
   print("entered ingame state: "..ball.currentState)
+  self.timer = timer:new()
+  self.timer:add(1, function() ready = true end)
+  
+  local target = {r = 0, g = 255}
+  self.timer:tween(1, ball, target, "in-quint")
 end
 
 function ingame:update(dt)
+    self.timer:update(dt)
     updatePaddle(dt)
     print("currnetState: "..ball.currentState)
     playerStates[ball.currentState](dt)
@@ -219,12 +232,10 @@ function ingame:draw()
   drawMessage()
 end
 
--- Non-player keypresses
-function love.keypressed(k)
-  if k=="escape" then love.event.quit() end
-  if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
-  if k=="delete" then collectgarbage("collect") end
+function ingame:escPressed()
+    self:gotoState("menu")
 end
+
 
 
 return ingame

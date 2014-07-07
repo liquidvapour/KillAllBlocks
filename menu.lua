@@ -22,3 +22,7 @@ function menu:update(dt)
         self:gotoState("ingame")
     end
 end
+
+function menu:escPressed()
+    love.event.quit()
+end
