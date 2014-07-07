@@ -53,7 +53,7 @@ local function updatePaddle(dt)
         dx = -paddle.speed * dt
     end
 
-    if currentState == "onGoal" and love.keyboard.isDown('up') then
+    if currentState == "onGoal" and love.keyboard.isDown(' ') then
         currentState = "playing"
         --ball.velocity.x, ball.velocity.y = 50, -267
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
@@ -104,17 +104,11 @@ local function updatePlayer(dt)
         
         if hitPaddle then
             local playerCenterX = tl + (ball.w / 2)
-            print("playerCenterX: "..playerCenterX)
             local paddleCenterX = paddle.l + (paddle.w / 2)            
-            print("paddle.w: "..paddle.w)
-            print("paddleCenterX: "..paddleCenterX)
             local collisionCenter = paddleCenterX - playerCenterX
-            print("collisionCenter: "..collisionCenter)
             local offset = -(collisionCenter / (paddle.w/2))
             offset = math.clamp(-1, offset, 1)
-            print("offset: "..offset)
             dir = vector(offset, -1.0):normalized()
-            print("dir.x: "..dir.x..",y: "..dir.y)
         end
         
         ball.velocity = dir * ball.velocity:len()
@@ -222,4 +216,4 @@ function love.keypressed(k)
   if k=="escape" then love.event.quit() end
   if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
   if k=="delete" then collectgarbage("collect") end
-    end
+end
