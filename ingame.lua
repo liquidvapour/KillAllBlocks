@@ -72,9 +72,6 @@ end
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
 local function updatePlayer(dt)
-  
-  --ball.velocity = ball.velocity * ball.acceleration * dt
-     
   local dx = ball.velocity.x * dt
   local dy = ball.velocity.y * dt
   
@@ -133,14 +130,11 @@ local function updatePlayerOnPaddle(dt)
     ball:moveTo(pl + (paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
 
-
 local function drawPlayer()
     drawBox(ball, ball.r, ball.g, ball.b)
 end
 
 -- Block functions
-
-
 local function addBlock(l,t,w,h, tag)
   local block = {l=l,t=t,w=w,h=h,tag=tag}
   blocks[#blocks+1] = block
@@ -187,7 +181,6 @@ local function newBall()
     return result
 end
 
-
 function ingame:enteredState()
     ball = newBall()
 
@@ -196,11 +189,11 @@ function ingame:enteredState()
 
     blocks = {}
     
-    addBlock(0,       0,     800, 32, "side")
-    addBlock(0,      32,      32, 600-32*2, "side")
-    addBlock(800-32, 32,      32, 600-32*2, "side")
+    addBlock(0,       0, 800,       32, "side")
+    addBlock(0,      32,  32, 600-32*2, "side")
+    addBlock(800-32, 32,  32, 600-32*2, "side")
 
-    paddle = addBlock(350,      600-32, 100, 16, "side")
+    paddle = addBlock(350, 600-32, 100, 16, "side")
     paddle.velocityX = 0;
     paddle.speed = 700;
 
@@ -249,7 +242,5 @@ end
 function ingame:escPressed()
     self:gotoState("menu")
 end
-
-
 
 return ingame
