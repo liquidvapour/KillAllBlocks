@@ -1,9 +1,9 @@
 local Game = require "game"
 
-local bump = require 'bump'
-local bump_debug = require 'bump_debug'
-local vector = require 'hump.vector'
-local timer = require 'hump.timer'
+local bump = require "bump"
+local bump_debug = require "bump_debug"
+local vector = require "hump.vector"
+local timer = require "hump.timer"
 
 local ingame = Game:addState("ingame")
 
@@ -52,13 +52,13 @@ local function updatePaddle(dt)
     if not ready then return end
 
     local dx, dy = 0, 0
-    if love.keyboard.isDown('right') then
+    if love.keyboard.isDown("right") then
         dx = paddle.speed * dt
-    elseif love.keyboard.isDown('left') then
+    elseif love.keyboard.isDown("left") then
         dx = -paddle.speed * dt
     end
 
-    if ball.currentState == "onGoal" and love.keyboard.isDown(' ') then        
+    if ball.currentState == "onGoal" and love.keyboard.isDown(" ") then        
         ball:setCurrentState("playing")
         --ball.velocity.x, ball.velocity.y = 50, -267
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
