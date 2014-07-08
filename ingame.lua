@@ -25,23 +25,13 @@ local function drawBox(box, r,g,b)
 end
 
 -- World creation
-local world = bump.newWorld()
+local world 
 
 
 -- ball functions
-local ball = { l=50,t=50,w=20,h=20, velocity = vector(50, 267), speed = 300, inplay = true, currentState = "onGoal",
-    r = 255, g = 0, b = 0}
+local ball
 
-function ball:setCurrentState(state)
-    self.currentState = state
-end
-
-function ball:moveTo(l, t)
-    self.l, self.t = l, t
-    world:move(self, l, t)
-end
-
-local blocks = {}
+local blocks
 local paddle 
 local goal
 local hitGoal = false
@@ -92,8 +82,7 @@ local function updatePlayer(dt)
     local future_l, future_t = ball.l + dx, ball.t + dy
     local cols, len = world:check(ball, future_l, future_t)
     if len == 0 then
-      ball.l, ball.t = future_l, future_t
-      world:move(ball, future_l, future_t)
+        ball:moveTo(future_l, future_t)
     else
       local col, tl, tt, bl, bt
       while len > 0 do
@@ -107,8 +96,7 @@ local function updatePlayer(dt)
         
         cols, len = world:check(ball, bl, bt)
         if len == 0 then
-          ball.l, ball.t = bl, bt
-          world:move(ball, bl, bt)
+            ball:moveTo(bl, bt)
         end
         
         a = vector(tl, tt)
@@ -181,41 +169,67 @@ local function drawDebug()
   love.graphics.print(statistics, 630, 580 )
 end
 
+local function newBall()
+    local result = {
+        l = 50, t = 50, w = 20, h = 20, 
+        velocity = vector(50, 267), speed = 300, inplay = true, currentState = "onGoal",
+        r = 255, g = 0, b = 0}
+
+    function result:setCurrentState(state)
+        self.currentState = state
+    end
+    
+    function result:moveTo(l, t)
+        self.l, self.t = l, t
+        world:move(self, l, t)
+    end
+
+    return result
+end
+
 
 function ingame:enteredState()
-  world:add(ball, ball.l, ball.t, ball.w, ball.h)
+    ball = newBall()
 
-  addBlock(0,       0,     800, 32, "side")
-  addBlock(0,      32,      32, 600-32*2, "side")
-  addBlock(800-32, 32,      32, 600-32*2, "side")
-  
-  paddle = addBlock(350,      600-32, 100, 16, "side")
-  paddle.velocityX = 0;
-  paddle.speed = 700;
-  
-  goal = addBlock(0, 600-16, 800, 16, "side")
+    world = bump.newWorld()
+    world:add(ball, ball.l, ball.t, ball.w, ball.h)
 
-  math.randomseed(os.time())
-  
-  for i=1,30 do
-    addBlock( math.random(100, 600),
-              math.random(100, 400),
-              math.random(10, 100),
-              math.random(10, 100)
-    )
-  end
-  
-  playerStates.playing = updatePlayer
-  playerStates.onGoal = updatePlayerOnPaddle
-  
-  ball:setCurrentState("onGoal")
-  
-  print("entered ingame state: "..ball.currentState)
-  self.timer = timer:new()
-  self.timer:add(1, function() ready = true end)
-  
-  local target = {r = 0, g = 255}
-  self.timer:tween(1, ball, target, "in-quint")
+    blocks = {}
+    
+    addBlock(0,       0,     800, 32, "side")
+    addBlock(0,      32,      32, 600-32*2, "side")
+    addBlock(800-32, 32,      32, 600-32*2, "side")
+
+    paddle = addBlock(350,      600-32, 100, 16, "side")
+    paddle.velocityX = 0;
+    paddle.speed = 700;
+
+    goal = addBlock(0, 600-16, 800, 16, "side")
+
+    math.randomseed(os.time())
+
+    for i=1,30 do
+        addBlock( math.random(100, 600),
+                  math.random(100, 400),
+                  math.random(10, 100),
+                  math.random(10, 100)
+        )
+    end
+
+    playerStates.playing = updatePlayer
+    playerStates.onGoal = updatePlayerOnPaddle
+
+    ball:setCurrentState("onGoal")
+
+    print("entered ingame state: "..ball.currentState)
+    self.timer = timer:new()
+    
+    ready = false
+    self.timer:add(1, function() ready = true end)
+
+    local target = {r = 0, g = 255}
+    self.timer:tween(1, ball, target, "in-quint")
+    
 end
 
 function ingame:update(dt)
