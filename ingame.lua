@@ -44,7 +44,6 @@ local function removeItemFrom(tbl, item)
             table.remove(tbl, key)
         end 
     end
-    
 end
 
 local ready = false
@@ -194,7 +193,6 @@ function ingame:buildTargets()
 
     local targetWidth = 50
     local targetHeight = 10
-    local margin = 10
     local numRows = 10
     local numColumns = 12
     local count = 0
@@ -211,11 +209,8 @@ function ingame:buildTargets()
             count = count + 1
         end
     end 
-    
+
     self.blockCount = count
-    
-    addBlock(100, 100, 600, 400, "backdrop")
-    
 end
 
 function ingame:enteredState()
