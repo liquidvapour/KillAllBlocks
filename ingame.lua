@@ -130,7 +130,7 @@ local function updatePlayer(self, dt)
             self.blockCount = self.blockCount - 1
             self:hitTarget()
             if self.blockCount == 0 then
-                self:gotoState("gameover")
+                self:gotoState("gameover", self.myScorer:getScore())
             end
         end
       end
