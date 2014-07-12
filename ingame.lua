@@ -120,6 +120,7 @@ local function updatePlayer(self, dt)
             removeItemFrom(blocks, col.other)
             world:remove(col.other)
             self.blockCount = self.blockCount - 1
+            self:hitTarget()
             if self.blockCount == 0 then
                 self:gotoState("gameover")
             end
@@ -127,6 +128,10 @@ local function updatePlayer(self, dt)
       end
     end
   end
+end
+
+function ingame:hitTarget()
+    self:setScore(self:getScore() + 1)
 end
 
 local function updatePlayerOnPaddle(self, dt)
@@ -153,10 +158,11 @@ local function drawBlocks()
 end
 
 -- Message/debug functions
-local function drawMessage()
+function ingame:drawMessage()
   local msg = instructions:format(tostring(shouldDrawDebug))
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
+  love.graphics.print("score: "..self.score, 100, 10)
 end
 
 local function drawDebug()
@@ -262,7 +268,7 @@ function ingame:draw()
   drawBlocks()
   drawPlayer()
   if shouldDrawDebug then drawDebug() end
-  drawMessage()
+  self:drawMessage()
 end
 
 function ingame:escPressed()

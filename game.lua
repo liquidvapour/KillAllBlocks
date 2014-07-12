@@ -18,13 +18,22 @@ function Game:printInCenter(message)
 
 end
 
-function Game:initialise()
+function Game:initialize()
+    self.score = 0
 end
 
 function Game:draw()
 end
 
 function Game:update(dt)
+end
+
+function Game:getScore()
+    return self.score
+end
+
+function Game:setScore(value)
+    self.score = value
 end
 
 return Game
