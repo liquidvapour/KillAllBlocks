@@ -19,25 +19,12 @@ function Game:printInCenter(message)
 end
 
 function Game:initialize()
-    self.score = 0
 end
 
 function Game:draw()
 end
 
 function Game:update(dt)
-end
-
-function Game:getScore()
-    return self.myScorer:getScore()
-end
-
-function Game:setScore(value)
-    self.myScorer:setScore(value)
-end
-
-function Game:getCombo()
-    return self.myScorer:getCombo()
 end
 
 return Game
