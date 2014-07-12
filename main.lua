@@ -5,6 +5,7 @@ local vector     = require 'hump.vector'
 local game = require "game"
 require "ingame"
 require "menu"
+require "gameover"
 
 function love.load()
     myGame = game:new()

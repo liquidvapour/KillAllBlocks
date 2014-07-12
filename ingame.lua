@@ -44,6 +44,7 @@ local function removeItemFrom(tbl, item)
             table.remove(tbl, key)
         end 
     end
+    
 end
 
 local ready = false
@@ -71,7 +72,7 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
-local function updatePlayer(dt)
+local function updatePlayer(self, dt)
   local dx = ball.velocity.x * dt
   local dy = ball.velocity.y * dt
   
@@ -119,13 +120,17 @@ local function updatePlayer(dt)
         if col.other.tag ~= "side" then
             removeItemFrom(blocks, col.other)
             world:remove(col.other)
+            self.blockCount = self.blockCount - 1
+            if self.blockCount == 0 then
+                self:gotoState("gameover")
+            end
         end
       end
     end
   end
 end
 
-local function updatePlayerOnPaddle(dt)
+local function updatePlayerOnPaddle(self, dt)
     local pl, pt = paddle.l, paddle.t
     ball:moveTo(pl + (paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
@@ -171,6 +176,7 @@ local function newBall()
 
     function result:setCurrentState(state)
         self.currentState = state
+        print("entered ball state: "..self.currentState)
     end
     
     function result:moveTo(l, t)
@@ -201,7 +207,9 @@ function ingame:enteredState()
 
     math.randomseed(os.time())
 
-    for i=1,30 do
+    self.blockCount = 30
+    
+    for i = 1, self.blockCount do
         addBlock( math.random(100, 600),
                   math.random(100, 400),
                   math.random(10, 100),
@@ -211,10 +219,10 @@ function ingame:enteredState()
 
     playerStates.playing = updatePlayer
     playerStates.onGoal = updatePlayerOnPaddle
-
+    print("playerStates length just after adding methods: "..#playerStates)
     ball:setCurrentState("onGoal")
 
-    print("entered ingame state: "..ball.currentState)
+    
     self.timer = timer:new()
     
     ready = false
@@ -222,14 +230,16 @@ function ingame:enteredState()
 
     local target = {r = 0, g = 255}
     self.timer:tween(1, ball, target, "in-quint")
-    
+    print("Entered ingame state.")
 end
 
 function ingame:update(dt)
     self.timer:update(dt)
     updatePaddle(dt)
-    print("currnetState: "..ball.currentState)
-    playerStates[ball.currentState](dt)
+    print("playerStates length: "..#playerStates)
+    print("currnetState: "..ball.currentState)    
+    print("ball.currentState: "..ball.currentState)    
+    playerStates[ball.currentState](self, dt)
 end
 
 function ingame:draw()
