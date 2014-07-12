@@ -187,6 +187,37 @@ local function newBall()
     return result
 end
 
+function ingame:buildTargets()
+    math.randomseed(os.time())
+
+    self.blockCount = 30
+
+    local targetWidth = 50
+    local targetHeight = 10
+    local margin = 10
+    local numRows = 10
+    local numColumns = 12
+    local count = 0
+    
+    local tl, tr
+    for x = 0, numColumns - 1 do
+        for y = 0, numRows - 1 do
+            tl = 100 + (x * (targetWidth))
+            tr = 100 + (y * (targetHeight))
+            addBlock(tl,
+                     tr,
+                     targetWidth,
+                     targetHeight)
+            count = count + 1
+        end
+    end 
+    
+    self.blockCount = count
+    
+    addBlock(100, 100, 600, 400, "backdrop")
+    
+end
+
 function ingame:enteredState()
     ball = newBall()
 
@@ -205,18 +236,8 @@ function ingame:enteredState()
 
     goal = addBlock(0, 600-16, 800, 16, "side")
 
-    math.randomseed(os.time())
-
-    self.blockCount = 30
+    self:buildTargets()
     
-    for i = 1, self.blockCount do
-        addBlock( math.random(100, 600),
-                  math.random(100, 400),
-                  math.random(10, 100),
-                  math.random(10, 100)
-        )
-    end
-
     playerStates.playing = updatePlayer
     playerStates.onGoal = updatePlayerOnPaddle
     print("playerStates length just after adding methods: "..#playerStates)
