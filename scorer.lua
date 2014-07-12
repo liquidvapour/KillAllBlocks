@@ -8,7 +8,7 @@ end
 
 function Scorer:hitTarget()
     self.combo = self.combo + 1
-    self:setScore(self:getScore() + (1 * (self.combo)))    
+    self.score = self.score + (self.combo * self.combo)
 end
 
 function Scorer:hitSide()
@@ -32,8 +32,12 @@ function Scorer:setScore(value)
 end
 
 function Scorer:reset()
-    self.score = 0
+    self:resetScore()
     self:resetCombo()
+end
+
+function Scorer:resetScore()
+    self.score = 0
 end
 
 function Scorer:resetCombo()
