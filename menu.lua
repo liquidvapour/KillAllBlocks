@@ -1,8 +1,9 @@
 local Game = require "game"
+local uimenu = require "uimenu"
+local menuState = Game:addState("menu")
 
-local menu = Game:addState("menu")
 
-function menu:draw()
+function menuState:draw()
     local windowWidth = love.window.getWidth()
     local windowHeight = love.window.getHeight()
     
@@ -14,15 +15,24 @@ function menu:draw()
     local textt = windowHeight / 2
     
     love.graphics.printf("press [Space] to start", textl, textt, textw, "center")
-
+    self.menu:draw()
 end
 
-function menu:update(dt)
+function menuState:enteredState()
+    local image = love.graphics.newImage("resources/title.png")
+    self.menu = uimenu:new(image)
+end
+
+function menuState:update(dt)
     if love.keyboard.isDown(' ') then
         self:gotoState("ingame")
     end
+    
+    self.menu:update(dt)
 end
 
-function menu:escPressed()
+function menuState:escPressed()
     love.event.quit()
 end
+
+return menuState
