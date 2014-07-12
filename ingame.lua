@@ -4,6 +4,7 @@ local bump = require "bump"
 local bump_debug = require "bump_debug"
 local vector = require "hump.vector"
 local timer = require "hump.timer"
+local scorer = require "scorer"
 
 local ingame = Game:addState("ingame")
 
@@ -108,6 +109,7 @@ local function updatePlayer(self, dt)
             local offset = -(collisionCenter / (paddle.w/2))
             offset = math.clamp(-1, offset, 1)
             dir = vector(offset, -1.0):normalized()
+            self:hitPaddle()
         end
         
         ball.velocity = dir * ball.velocity:len()
@@ -116,7 +118,9 @@ local function updatePlayer(self, dt)
             ball:setCurrentState("onGoal")
         end
         
-        if col.other.tag ~= "side" then
+        if col.other.tag == "side" then
+            self:hitSide()
+        else
             removeItemFrom(blocks, col.other)
             world:remove(col.other)
             self.blockCount = self.blockCount - 1
@@ -131,7 +135,15 @@ local function updatePlayer(self, dt)
 end
 
 function ingame:hitTarget()
-    self:setScore(self:getScore() + 1)
+    self.myScorer:hitTarget()
+end
+
+function ingame:hitSide()
+    self.myScorer:hitSide()
+end
+
+function ingame:hitPaddle()
+    self.myScorer:hitPaddle()
 end
 
 local function updatePlayerOnPaddle(self, dt)
@@ -253,6 +265,8 @@ function ingame:enteredState()
     local target = {r = 0, g = 255}
     self.timer:tween(1, ball, target, "in-quint")
     print("Entered ingame state.")
+    
+    self.myScorer = scorer:new(self)
 end
 
 function ingame:update(dt)
