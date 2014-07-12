@@ -37,6 +37,7 @@ local paddle
 local goal
 local hitGoal = false
 local playerStates = {}
+local ready = false
 --local currentState
 
 local function removeItemFrom(tbl, item)
@@ -47,7 +48,6 @@ local function removeItemFrom(tbl, item)
     end
 end
 
-local ready = false
 
 function ingame:updatePaddle(dt)
     if not ready then return end
@@ -226,10 +226,10 @@ function ingame:buildTargets()
 
     self.blockCount = 30
 
-    local targetWidth = 50
-    local targetHeight = 10
-    local numRows = 10
-    local numColumns = 12
+    local targetWidth = 100
+    local targetHeight = 20
+    local numRows = 6
+    local numColumns = 6
     local count = 0
     
     local tl, tr
