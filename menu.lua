@@ -13,7 +13,7 @@ function menuState:draw()
     
     local textl = windowCenter - (textw / 2)
     local textt = windowHeight / 2
-    
+    love.graphics.setColor(255, 255, 255)
     love.graphics.printf("press [Space] to start", textl, textt, textw, "center")
     self.menu:draw()
 end
