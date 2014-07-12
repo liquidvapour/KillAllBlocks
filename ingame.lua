@@ -146,6 +146,19 @@ function ingame:hitPaddle()
     self.myScorer:hitPaddle()
 end
 
+function ingame:getScore()
+    return self.myScorer:getScore()
+end
+
+function ingame:setScore(value)
+    self.myScorer:setScore(value)
+end
+
+function ingame:getCombo()
+    return self.myScorer:getCombo()
+end
+
+
 local function updatePlayerOnPaddle(self, dt)
     local pl, pt = paddle.l, paddle.t
     ball:moveTo(pl + (paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
@@ -174,7 +187,7 @@ function ingame:drawMessage()
   local msg = instructions:format(tostring(shouldDrawDebug))
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
-  love.graphics.print("score: "..self.score, 100, 10)
+  love.graphics.print("score: "..self:getScore()..", combo: "..self:getCombo(), 100, 10)
 end
 
 local function drawDebug()

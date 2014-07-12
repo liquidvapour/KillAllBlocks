@@ -2,9 +2,8 @@ local Class = require "lib.middleclass"
 
 local Scorer = Class("Scorer")
 
-function Scorer:initialize(game)
-    self.game = game
-    self.game:setScore(0)
+function Scorer:initialize()
+    self:setScore(0)
     self.combo = 1
 end
 
@@ -21,12 +20,16 @@ function Scorer:hitPaddle()
     self.combo = 1
 end
 
+function Scorer:getCombo()
+    return self.combo
+end
+
 function Scorer:getScore()
-    return self.game:getScore()
+    return self.score
 end
 
 function Scorer:setScore(value)
-    return self.game:setScore(value)
+    self.score = value
 end
 
 return Scorer
