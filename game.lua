@@ -19,6 +19,7 @@ function Game:printInCenter(message)
 end
 
 function Game:initialize()
+    self.useMouse = false
 end
 
 function Game:draw()
@@ -26,5 +27,7 @@ end
 
 function Game:update(dt)
 end
+
+
 
 return Game

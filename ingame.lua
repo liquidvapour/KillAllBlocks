@@ -49,15 +49,8 @@ end
 
 local ready = false
 
-local function updatePaddle(dt)
+function ingame:updatePaddle(dt)
     if not ready then return end
-
-    local dx, dy = 0, 0
-    if love.keyboard.isDown("right") then
-        dx = paddle.speed * dt
-    elseif love.keyboard.isDown("left") then
-        dx = -paddle.speed * dt
-    end
 
     if ball.currentState == "onGoal" and love.keyboard.isDown(" ") then        
         ball:setCurrentState("playing")
@@ -66,7 +59,18 @@ local function updatePaddle(dt)
         ball.velocity = dir * ball.speed
     end
 
-    paddle.l = paddle.l + dx
+    local dx, dy = 0, 0
+    if self.useMouse then
+        paddle.l = love.mouse.getX()
+    else
+        if love.keyboard.isDown("right") then
+            dx = paddle.speed * dt
+        elseif love.keyboard.isDown("left") then
+            dx = -paddle.speed * dt
+        end
+        paddle.l = paddle.l + dx
+    end
+    
     world:move(paddle, paddle.l, paddle.t)
 end
 
@@ -284,7 +288,7 @@ end
 
 function ingame:update(dt)
     self.timer:update(dt)
-    updatePaddle(dt)
+    self:updatePaddle(dt)
     print("playerStates length: "..#playerStates)
     print("currnetState: "..ball.currentState)    
     print("ball.currentState: "..ball.currentState)    

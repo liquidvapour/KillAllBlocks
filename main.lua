@@ -26,3 +26,9 @@ function love.keypressed(k)
   if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
   if k=="delete" then collectgarbage("collect") end
 end
+
+function love.mousepressed(x, y, button)
+    if button == "l" then
+        myGame.useMouse = not myGame.useMouse
+    end
+end
