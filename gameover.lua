@@ -7,7 +7,7 @@ function gameover:enteredState(finalScore)
 end
 
 function gameover:draw()
-    self:printInCenter("Game Over!\n final score: "..self.finalScore)
+    self:printInCenter("Game Over!\n final score: "..self.finalScore.."\nPress [ESC] to restart")
 end
 
 function gameover:escPressed()

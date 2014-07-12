@@ -239,8 +239,8 @@ function ingame:buildTargets()
             tr = 100 + (y * (targetHeight))
             addBlock(tl,
                      tr,
-                     targetWidth,
-                     targetHeight)
+                     targetWidth - 1,
+                     targetHeight - 1)
             count = count + 1
         end
     end 
