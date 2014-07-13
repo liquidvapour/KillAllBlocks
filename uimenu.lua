@@ -24,8 +24,9 @@ function Menu:createMenuItems()
     local result = utils.newList()
     local itemPause = 0.15
     result:add(self:createItem("resources/newgame.png", 350, itemPause * 0, 255, 0, 0))
-    result:add(self:createItem("resources/newgame.png", 380, itemPause * 1, 0, 255, 0))
-    result:add(self:createItem("resources/newgame.png", 410, itemPause * 2, 0, 0, 255))
+    result:add(self:createItem("resources/selection.png", 350, itemPause * 0, 255, 0, 0))
+    result:add(self:createItem("resources/options.png", 380, itemPause * 1, 0, 255, 0))
+    result:add(self:createItem("resources/quit.png", 410, itemPause * 2, 0, 0, 255))
     return result
 end
 

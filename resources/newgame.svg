@@ -15,7 +15,10 @@
    id="svg3015"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 2">
+   sodipodi:docname="newgame.svg"
+   inkscape:export-filename="C:\Users\ra-el\dev\love\pong\resources\selection.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs3017">
     <linearGradient
@@ -50,10 +53,10 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.0366667"
-     inkscape:cx="160.86004"
+     inkscape:zoom="2.7066667"
+     inkscape:cx="150"
      inkscape:cy="15"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer5"
      showgrid="true"
      inkscape:document-units="px"
      inkscape:grid-bbox="true"
@@ -80,9 +83,11 @@
   </metadata>
   <g
      id="layer1"
-     inkscape:label="Layer 1"
+     inkscape:label="background"
      inkscape:groupmode="layer"
-     transform="translate(0,-34)">
+     transform="translate(0,-34)"
+     style="display:none"
+     sodipodi:insensitive="true">
     <rect
        style="fill:url(#linearGradient3805);fill-opacity:1;stroke:none"
        id="rect3027"
@@ -90,16 +95,108 @@
        height="30"
        x="0"
        y="34" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="text new game"
+     style="display:none"
+     sodipodi:insensitive="true">
     <text
        xml:space="preserve"
-       style="font-size:28.84810066000000000px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#b8baff;fill-opacity:1;stroke:none;font-family:Sans"
+       style="font-size:28.84810066px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#b8baff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
        x="77.330399"
-       y="59.325027"
+       y="25.325027"
        id="text3023"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3025"
          x="77.330399"
-         y="59.325027">New Game</tspan></text>
+         y="25.325027">New Game</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="text options"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <text
+       sodipodi:linespacing="125%"
+       id="text3813"
+       y="22.641647"
+       x="100.1356"
+       style="font-size:28.84810066px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#b8baff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
+       xml:space="preserve"><tspan
+         y="22.641647"
+         x="100.1356"
+         id="tspan3815"
+         sodipodi:role="line">Options</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="text quit"
+     style="display:none"
+     sodipodi:insensitive="true">
+    <flowRoot
+       transform="translate(0,-34)"
+       xml:space="preserve"
+       style="font-size:28.84810066px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#b8baff;fill-opacity:1;stroke:none;display:inline;font-family:Sans;-inkscape-font-specification:Sans"
+       id="flowRoot3826"><flowRegion
+         id="flowRegion3828"><use
+           x="0"
+           y="0"
+           xlink:href="#rect3027"
+           id="use3830"
+           width="300"
+           height="30" /></flowRegion><flowPara
+         id="flowPara3832">Quit</flowPara></flowRoot>  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="highlight">
+    <rect
+       style="fill:none;stroke:#efe207;stroke-width:0.98188829;stroke-opacity:1"
+       id="rect3847"
+       width="299.01813"
+       height="29.018112"
+       x="0.49094415"
+       y="0.4909445" />
+    <path
+       sodipodi:type="star"
+       style="fill:#faff00;fill-opacity:1;stroke:none"
+       id="path3849"
+       sodipodi:sides="3"
+       sodipodi:cx="-25.059666"
+       sodipodi:cy="-5.4415274"
+       sodipodi:r1="40.45504"
+       sodipodi:r2="4.0843716"
+       sodipodi:arg1="0.0088493112"
+       sodipodi:arg2="1.0560469"
+       inkscape:flatsided="true"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 15.39379,-5.0835328 -60.990216,34.4967288 0.620065,-70.067441 z"
+       inkscape:transform-center-x="0.077826713"
+       inkscape:transform-center-y="0.061173011"
+       transform="matrix(0.16396072,0,0,0.14271964,7.4760232,15.802159)" />
+    <path
+       transform="matrix(-0.16396072,0,0,0.14271964,292.52398,15.802159)"
+       inkscape:transform-center-y="0.061173011"
+       d="m 15.39379,-5.0835328 -60.990216,34.4967288 0.620065,-70.067441 z"
+       inkscape:randomized="0"
+       inkscape:rounded="0"
+       inkscape:flatsided="true"
+       sodipodi:arg2="1.0560469"
+       sodipodi:arg1="0.0088493112"
+       sodipodi:r2="4.0843716"
+       sodipodi:r1="40.45504"
+       sodipodi:cy="-5.4415274"
+       sodipodi:cx="-25.059666"
+       sodipodi:sides="3"
+       id="path3851"
+       style="fill:#faff00;fill-opacity:1;stroke:none"
+       sodipodi:type="star"
+       inkscape:transform-center-x="-0.077826719" />
   </g>
 </svg>
