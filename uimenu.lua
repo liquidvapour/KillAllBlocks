@@ -37,16 +37,20 @@ function Menu:createSelection()
     
     local menuItems = self.menuItems
     
+    function result:moveOverTime(itemIndex)
+        return tween.new(0.005, self, {t = menuItems[itemIndex].t})
+    end
+    
     function result:gotoNext()
         self.currentItemIndex = self.currentItemIndex + 1
         if self.currentItemIndex > #menuItems then self.currentItemIndex = 1 end
-        self.tween = tween.new(0.1, self, {t = menuItems[self.currentItemIndex].t})
+        self.tween = self:moveOverTime(self.currentItemIndex)
     end
 
     function result:gotoPreviouse()
         self.currentItemIndex = self.currentItemIndex - 1
         if self.currentItemIndex == 0 then self.currentItemIndex = #menuItems end
-        self.tween = tween.new(0.1, self, {t = menuItems[self.currentItemIndex].t})
+        self.tween = self:moveOverTime(self.currentItemIndex)
     end
     
     function result:draw()
@@ -64,14 +68,14 @@ end
 
 function Menu:createMenuItems()
     local result = utils.newList()
-    local itemPause = 0.15
+    local itemPause = 0.5
     result:add(self:createItem(
-        "resources/newgame.png", 350, itemPause * 0, 
+        "resources/newgame.png", 350, itemPause * 1, 
         function() 
             if self.onNewGame then self.onNewGame() end 
         end))
     result:add(self:createItem("resources/options.png", 380, itemPause * 1))
-    result:add(self:createItem("resources/quit.png", 410, itemPause * 2, function() love.event.quit() end))
+    result:add(self:createItem("resources/quit.png", 410, itemPause * 1, function() love.event.quit() end))
     return result
 end
 
@@ -82,8 +86,14 @@ function Menu:createItem(resource, t, pause, onSelected, r, g, b)
         l = -150, t = t, w = 300, h = 30, 
         onSelected = onSelected,
         r = r or 255, g = g or 255, b = b or 255, a = 0}
-    timer.add(pause, function() menuItem.tween = tween.new(0.5, menuItem, {l = love.window.getWidth() / 2, a = 255}, "linear") end)
+    timer.add(pause, createMenuItemTweenFunction(menuItem, 0.50, "linear"))
     return menuItem
+end
+
+function createMenuItemTweenFunction(menuItem, duration, tweenType)
+    return function() 
+        menuItem.tween = tween.new(duration, menuItem, {l = love.window.getWidth() / 2, a = 255}, tweenType) 
+    end
 end
 
 function Menu:onDownClicked()
