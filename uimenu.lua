@@ -10,6 +10,7 @@ function Menu:initialize(image)
     self.selection = self:createSelection()
     self.downPressed = false
     self.upPressed = false
+    self.enterPressed = false
 end
 
 function Menu:createTitle(image)
@@ -50,6 +51,13 @@ function Menu:createSelection()
     function result:draw()
         love.graphics.draw(self.image, self.l, self.t)
     end
+    
+    function result:select()
+        local selectedItem = menuItems[self.currentItemIndex]
+        if selectedItem.onSelected then
+            selectedItem:onSelected()
+        end
+    end
     return result
 end
 
@@ -58,13 +66,17 @@ function Menu:createMenuItems()
     local itemPause = 0.15
     result:add(self:createItem("resources/newgame.png", 350, itemPause * 0))
     result:add(self:createItem("resources/options.png", 380, itemPause * 1))
-    result:add(self:createItem("resources/quit.png", 410, itemPause * 2))
+    result:add(self:createItem("resources/quit.png", 410, itemPause * 2, function() love.event.quit() end))
     return result
 end
 
-function Menu:createItem(resource, t, pause, r, g, b)
+function Menu:createItem(resource, t, pause, onSelected, r, g, b)
     local image = love.graphics.newImage(resource)
-    local menuItem = {image = image, l = -150, t = t, w = 300, h = 30, r = r or 255, g = g or 255, b = b or 255, a = 0}
+    local menuItem = {
+        image = image, 
+        l = -150, t = t, w = 300, h = 30, 
+        onSelected = onSelected,
+        r = r or 255, g = g or 255, b = b or 255, a = 0}
     timer.add(pause, function() menuItem.tween = tween.new(0.5, menuItem, {l = love.window.getWidth() / 2, a = 255}, "linear") end)
     return menuItem
 end
@@ -77,8 +89,11 @@ function Menu:onUpClicked()
     self.selection:gotoPreviouse()
 end
 
+function Menu:onEnterClicked()
+    self.selection:select()
+end
 
-function Menu:update(dt)
+function Menu:doKeys()
     if love.keyboard.isDown('down') then
         self.downPressed = true
     elseif self.downPressed then
@@ -92,6 +107,18 @@ function Menu:update(dt)
         self.upPressed = false
         self:onUpClicked()
     end
+    
+    if love.keyboard.isDown("return") then
+        self.enterPressed = true
+    elseif self.enterPressed then
+        print("enter clicked")
+        self.enterPressed = false
+        self:onEnterClicked()
+    end
+end
+
+function Menu:update(dt)
+    self:doKeys()
     
     if self.selection.tween then
         self.selection.tween:update(dt)
