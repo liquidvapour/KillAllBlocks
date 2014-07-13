@@ -17,13 +17,13 @@ function Menu:initialize(image)
     self.menuItems = {}
     
     table.insert(self.menuItems, self:createItem("start", 350, 0, 255, 0, 0))
-    table.insert(self.menuItems, self:createItem("options 01", 380, 0.05, 0, 255, 0))
-    table.insert(self.menuItems, self:createItem("options 02", 410, 0.1, 0, 0, 255))
+    table.insert(self.menuItems, self:createItem("options 01", 380, 1, 0, 255, 0))
+    table.insert(self.menuItems, self:createItem("options 02", 410, 2, 0, 0, 255))
 end
 
 function Menu:createItem(message, t, pause, r, g, b)
-    local menuItem = {text = message, l = -150, t = t, w = 300, h = 30, r = r, g = g, b = b}
-    timer.add(pause, function() menuItem.tween = tween.new(0.5, menuItem, {l = love.window.getWidth() / 2}, "linear") end)
+    local menuItem = {text = message, l = -150, t = t, w = 300, h = 30, r = r, g = g, b = b, a = 0}
+    timer.add(pause, function() menuItem.tween = tween.new(2.5, menuItem, {l = love.window.getWidth() / 2, a = 255}, "linear") end)
     return menuItem
 end
 
@@ -48,7 +48,7 @@ function Menu:draw()
     --love.graphics.rectangle("fill", self.title.x, self.title.y, self.title.width, self.title.height)
     
     for i, v in ipairs(self.menuItems) do
-        love.graphics.setColor(v.r, v.g, v.b)
+        love.graphics.setColor(v.r, v.g, v.b, v.a)
         love.graphics.rectangle("fill", v.l - (v.w / 2), v.t, v.w, v.h)
         love.graphics.setColor(0, 0, 0)
         utils.printCenter(v.text, v.l, v.t, v.w)
