@@ -21,7 +21,6 @@ function Utils.newList()
     function result:iterate()
         local i = 0
         local n = table.getn(self)
-        print("iterating n: "..n.." item table")
         return function()
                     i = i + 1
                     if i <= n then return self[i] end
