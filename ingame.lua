@@ -61,7 +61,7 @@ function ingame:updatePaddle(dt)
 
     local dx, dy = 0, 0
     if self.useMouse then
-        paddle.l = love.mouse.getX()
+        paddle.l = love.mouse.getX() - (paddle.w/2)
     else
         if love.keyboard.isDown("right") then
             dx = paddle.speed * dt
@@ -110,7 +110,7 @@ local function updatePlayer(self, dt)
             local playerCenterX = tl + (ball.w / 2)
             local paddleCenterX = paddle.l + (paddle.w / 2)            
             local collisionCenter = paddleCenterX - playerCenterX
-            local offset = -(collisionCenter / (paddle.w/2))
+            local offset = -(collisionCenter / (paddle.w / 2))
             offset = math.clamp(-1, offset, 1)
             dir = vector(offset, -1.0):normalized()
             self:hitPaddle()
@@ -289,9 +289,6 @@ end
 function ingame:update(dt)
     self.timer:update(dt)
     self:updatePaddle(dt)
-    print("playerStates length: "..#playerStates)
-    print("currnetState: "..ball.currentState)    
-    print("ball.currentState: "..ball.currentState)    
     playerStates[ball.currentState](self, dt)
 end
 

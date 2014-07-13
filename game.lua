@@ -28,6 +28,4 @@ end
 function Game:update(dt)
 end
 
-
-
 return Game
