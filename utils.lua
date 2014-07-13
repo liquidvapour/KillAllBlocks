@@ -12,4 +12,22 @@ function Utils.printCenter(message, cx, cy, width, height)
     
 end    
 
+function Utils.newList()
+    local result = {}
+    function result:add(item)
+        table.insert(self, item)
+    end
+    
+    function result:iterate()
+        local i = 0
+        local n = table.getn(self)
+        print("iterating n: "..n.." item table")
+        return function()
+                    i = i + 1
+                    if i <= n then return self[i] end
+               end
+    end
+    return result
+end
+
 return Utils
