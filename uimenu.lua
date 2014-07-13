@@ -11,6 +11,7 @@ function Menu:initialize(image)
     self.downPressed = false
     self.upPressed = false
     self.enterPressed = false
+    self.onNewGame = nil
 end
 
 function Menu:createTitle(image)
@@ -64,7 +65,11 @@ end
 function Menu:createMenuItems()
     local result = utils.newList()
     local itemPause = 0.15
-    result:add(self:createItem("resources/newgame.png", 350, itemPause * 0))
+    result:add(self:createItem(
+        "resources/newgame.png", 350, itemPause * 0, 
+        function() 
+            if self.onNewGame then self.onNewGame() end 
+        end))
     result:add(self:createItem("resources/options.png", 380, itemPause * 1))
     result:add(self:createItem("resources/quit.png", 410, itemPause * 2, function() love.event.quit() end))
     return result

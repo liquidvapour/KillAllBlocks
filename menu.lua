@@ -21,6 +21,7 @@ end
 function menuState:enteredState()
     local image = love.graphics.newImage("resources/title.png")
     self.menu = uimenu:new(image)
+    self.menu.onNewGame = function() self:gotoState("ingame") end
 end
 
 function menuState:update(dt)
