@@ -14,11 +14,15 @@ function Menu:initialize(image)
     self.title.y = -self.title.height
     self.title.tween = tween.new(2.65, self.title, {y=75}, 'outBounce')
     
-    self.menuItems = {}
-    
-    table.insert(self.menuItems, self:createItem("start", 350, 0, 255, 0, 0))
-    table.insert(self.menuItems, self:createItem("options 01", 380, 1, 0, 255, 0))
-    table.insert(self.menuItems, self:createItem("options 02", 410, 2, 0, 0, 255))
+    self.menuItems = self.createMenuItems()
+end
+
+function Menu:createMenuItems()
+    local result = {}    
+    table.insert(result, self:createItem("start", 350, 0, 255, 0, 0))
+    table.insert(result, self:createItem("options 01", 380, 1, 0, 255, 0))
+    table.insert(result, self:createItem("options 02", 410, 2, 0, 0, 255))
+    return result
 end
 
 function Menu:createItem(message, t, pause, r, g, b)

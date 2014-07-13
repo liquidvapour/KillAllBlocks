@@ -48,13 +48,11 @@ local function removeItemFrom(tbl, item)
     end
 end
 
-
 function ingame:updatePaddle(dt)
     if not ready then return end
 
     if ball.currentState == "onGoal" and love.keyboard.isDown(" ") then        
         ball:setCurrentState("playing")
-        --ball.velocity.x, ball.velocity.y = 50, -267
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
         ball.velocity = dir * ball.speed
     end
