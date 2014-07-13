@@ -199,13 +199,16 @@ local function drawDebug()
 
   local statistics = ("fps: %d, mem: %dKB"):format(love.timer.getFPS(), collectgarbage("count"))
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print(statistics, 630, 580 )
+  love.graphics.print(statistics, 630, 580)
 end
 
 local function newBall()
     local result = {
         l = 50, t = 50, w = 20, h = 20, 
-        velocity = vector(50, 267), speed = 300, inplay = true, currentState = "onGoal",
+        velocity = vector(50, 267), 
+        speed = 300, 
+        inplay = true, 
+        currentState = "onGoal",
         r = 255, g = 0, b = 0}
 
     function result:setCurrentState(state)
@@ -222,7 +225,7 @@ local function newBall()
 end
 
 function ingame:buildTargets()
-    math.randomseed(os.time())
+    math.randomseed(love.timer.getTime())
 
     self.blockCount = 30
 
