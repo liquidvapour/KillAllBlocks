@@ -14,7 +14,7 @@ function Menu:initialize(image)
     self.title.y = -self.title.height
     self.title.tween = tween.new(2.65, self.title, {y=75}, 'outBounce')
     
-    self.menuItems = self.createMenuItems()
+    self.menuItems = self:createMenuItems()
 end
 
 function Menu:createMenuItems()
