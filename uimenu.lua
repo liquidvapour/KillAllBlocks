@@ -2,6 +2,7 @@ local Class = require "lib.middleclass"
 local tween = require("lib.tween")
 local utils = require("utils")
 local timer = require("hump.timer")
+
 local Menu = Class("Menu")
 
 function Menu:initialize(image)
@@ -32,13 +33,16 @@ function Menu:createSelection()
         currentItemIndex = 1, 
         l = (love.window.getWidth() / 2) - (300 / 2), 
         t = self.menuItems[1].t, 
-        tween = nil
+        tween = nil,
+        a = 0
     }
     
     local menuItems = self.menuItems
     
+    result.appearingTween = tween.new(2, result, {a = 255})
+    
     function result:moveOverTime(itemIndex)
-        return tween.new(0.005, self, {t = menuItems[itemIndex].t})
+        return tween.new(0.05, self, {t = menuItems[itemIndex].t})
     end
     
     function result:gotoNext()
@@ -54,7 +58,10 @@ function Menu:createSelection()
     end
     
     function result:draw()
+        love.graphics.push()
+        love.graphics.setColor(255, 255, 255, self.a)
         love.graphics.draw(self.image, self.l, self.t)
+        love.graphics.pop()
     end
     
     function result:select()
@@ -63,6 +70,14 @@ function Menu:createSelection()
             selectedItem:onSelected()
         end
     end
+    
+    function result:update(dt)
+        self.appearingTween:update(dt)
+        if self.tween then
+            self.tween:update(dt)
+        end 
+    end
+    
     return result
 end
 
@@ -135,10 +150,7 @@ end
 function Menu:update(dt)
     self:doKeys()
     
-    if self.selection.tween then
-        self.selection.tween:update(dt)
-    end
-    
+    self.selection:update(dt)    
     timer.update(dt)
     self.title.tween:update(dt)
     for v in self.menuItems:iterate() do
