@@ -165,7 +165,7 @@ local function updatePlayerOnPaddle(self, dt)
     ball:moveTo(pl + (self.paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
 
-local function drawPlayer()
+local function drawBall()
     drawBox(ball, ball.r, ball.g, ball.b)
 end
 
@@ -291,7 +291,7 @@ end
 
 function ingame:draw()
   drawBlocks()
-  drawPlayer()
+  drawBall()
   if shouldDrawDebug then drawDebug() end
   self:drawMessage()
 end
