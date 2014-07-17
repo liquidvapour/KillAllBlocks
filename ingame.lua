@@ -210,7 +210,6 @@ local function newBall()
 
     function result:setCurrentState(state)
         self.currentState = state
-        print("entered ball state: "..self.currentState)
     end
     
     function result:moveTo(l, t)
@@ -270,7 +269,6 @@ function ingame:enteredState()
     
     playerStates.playing = updatePlayer
     playerStates.onGoal = updatePlayerOnPaddle
-    print("playerStates length just after adding methods: "..#playerStates)
     ball:setCurrentState("onGoal")
 
     
@@ -281,7 +279,6 @@ function ingame:enteredState()
 
     local target = {r = 0, g = 255}
     self.timer:tween(1, ball, target, "in-quint")
-    print("Entered ingame state.")
     
     self.myScorer = scorer:new(self)
 end
