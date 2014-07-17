@@ -32,8 +32,7 @@ local world
 -- ball functions
 local ball
 
-local blocks
-local paddle 
+local blocks 
 local goal
 local hitGoal = false
 local playerStates = {}
@@ -59,17 +58,17 @@ function ingame:updatePaddle(dt)
 
     local dx, dy = 0, 0
     if self.useMouse then
-        paddle.l = love.mouse.getX() - (paddle.w/2)
+        self.paddle.l = love.mouse.getX() - (self.paddle.w/2)
     else
         if love.keyboard.isDown("right") then
-            dx = paddle.speed * dt
+            dx = self.paddle.speed * dt
         elseif love.keyboard.isDown("left") then
-            dx = -paddle.speed * dt
+            dx = -self.paddle.speed * dt
         end
-        paddle.l = paddle.l + dx
+        self.paddle.l = self.paddle.l + dx
     end
     
-    world:move(paddle, paddle.l, paddle.t)
+    world:move(self.paddle, self.paddle.l, self.paddle.t)
 end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
@@ -89,7 +88,7 @@ local function updatePlayer(self, dt)
         col = cols[1]
         
         
-        local hitPaddle = col.other == paddle
+        local hitPaddle = col.other == self.paddle
         
         tl,tt,_,_,bl,bt = col:getBounce()
         ball:moveTo(tl, tt)
@@ -106,9 +105,9 @@ local function updatePlayer(self, dt)
         
         if hitPaddle then
             local playerCenterX = tl + (ball.w / 2)
-            local paddleCenterX = paddle.l + (paddle.w / 2)            
+            local paddleCenterX = self.paddle.l + (self.paddle.w / 2)            
             local collisionCenter = paddleCenterX - playerCenterX
-            local offset = -(collisionCenter / (paddle.w / 2))
+            local offset = -(collisionCenter / (self.paddle.w / 2))
             offset = math.clamp(-1, offset, 1)
             dir = vector(offset, -1.0):normalized()
             self:hitPaddle()
@@ -162,8 +161,8 @@ end
 
 
 local function updatePlayerOnPaddle(self, dt)
-    local pl, pt = paddle.l, paddle.t
-    ball:moveTo(pl + (paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
+    local pl, pt = self.paddle.l, self.paddle.t
+    ball:moveTo(pl + (self.paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
 
 local function drawPlayer()
@@ -261,9 +260,9 @@ function ingame:enteredState()
     addBlock(0,      32,  32, 600-32*2, "side")
     addBlock(800-32, 32,  32, 600-32*2, "side")
 
-    paddle = addBlock(350, 600-32, 100, 16, "side")
-    paddle.velocityX = 0;
-    paddle.speed = 700;
+    self.paddle = addBlock(350, 600-32, 100, 16, "side")
+    self.paddle.velocityX = 0;
+    self.paddle.speed = 700;
 
     goal = addBlock(0, 600-16, 800, 16, "side")
 
