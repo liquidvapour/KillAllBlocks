@@ -4,14 +4,12 @@ local menuState = Game:addState("menu")
 
 
 function menuState:draw()
-
+    love.graphics.setColor(255, 255, 255, self.a)
     love.graphics.draw(self.backgroundImage, self.backgroundQuad, 0, 0)
 
     local windowWidth = love.window.getWidth()
     local windowHeight = love.window.getHeight()
-
-
-    
+   
     local windowCenter = windowWidth / 2
     
     local textw = 250
@@ -33,12 +31,20 @@ function menuState:enteredState()
     self.backgroundQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), 128, 128)
 end
 
+function menuState:exitedState()
+	self.menu = nil
+	self.backgroundImage = nil
+	self.backgroundQuad = nil
+end
+
 function menuState:update(dt)
     if love.keyboard.isDown(' ') then
         self:gotoState("ingame")
     end
     
-    self.menu:update(dt)
+    if self.menu then
+        self.menu:update(dt)
+    end
 end
 
 function menuState:escPressed()
