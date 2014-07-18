@@ -30,7 +30,7 @@ function menuState:enteredState()
     self.background = {x = 0, y = 0}
     self.background.quad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), 128, 128)
     
-    self.background2 = {x = 0, y = 55}
+    self.background2 = {x = 0, y = 65}
     self.background2.quad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), 128, 128)
 
 end
@@ -44,8 +44,8 @@ end
 function menuState:update(dt)
     self.background.x = (self.background.x + (-50 * dt)) % (128)
     self.background.y = (self.background.y + (-50 * dt)) % (128)
-    print("background.x: "..self.background.x..", self.background.y: "..self.background.y)
     self.background.quad:setViewport(self.background.x, self.background.y, love.window.getWidth(), love.window.getHeight())
+
     self.background2.quad:setViewport(self.background2.x, self.background2.y, love.window.getWidth(), love.window.getHeight())
     if love.keyboard.isDown(' ') then
         self:gotoState("ingame")
