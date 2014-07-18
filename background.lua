@@ -13,7 +13,6 @@ local function normalize(x, y)
     
     nx, ny = x / length, y / length
     
-    print("|("..x..", "..y..")| => ("..nx..", "..ny..")")
     return x / length, y / length
 end
 

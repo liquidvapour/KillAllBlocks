@@ -50,12 +50,6 @@ end
 function ingame:updatePaddle(dt)
     if not ready then return end
 
-    if ball.currentState == "onGoal" and love.keyboard.isDown(" ") then        
-        ball:setCurrentState("playing")
-        local dir = vector(0 + (math.random() *0.2), 1):normalized()
-        ball.velocity = dir * ball.speed
-    end
-
     local dx, dy = 0, 0
     if self.useMouse then
         self.paddle.l = love.mouse.getX() - (self.paddle.w/2)
@@ -73,67 +67,6 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
-local function updatePlayer(self, dt)
-  local dx = ball.velocity.x * dt
-  local dy = ball.velocity.y * dt
-  
-  if dx ~= 0 or dy ~= 0 then
-    local future_l, future_t = ball.l + dx, ball.t + dy
-    local cols, len = world:check(ball, future_l, future_t)
-    if len == 0 then
-        ball:moveTo(future_l, future_t)
-    else
-      local col, tl, tt, bl, bt
-      while len > 0 do
-        col = cols[1]
-        
-        
-        local hitPaddle = col.other == self.paddle
-        
-        tl,tt,_,_,bl,bt = col:getBounce()
-        ball:moveTo(tl, tt)
-        
-        cols, len = world:check(ball, bl, bt)
-        if len == 0 then
-            ball:moveTo(bl, bt)
-        end
-        
-        a = vector(tl, tt)
-        b = vector(bl, bt)
-        dir = b - a
-        dir = dir:normalized()
-        
-        if hitPaddle then
-            local playerCenterX = tl + (ball.w / 2)
-            local paddleCenterX = self.paddle.l + (self.paddle.w / 2)            
-            local collisionCenter = paddleCenterX - playerCenterX
-            local offset = -(collisionCenter / (self.paddle.w / 2))
-            offset = math.clamp(-1, offset, 1)
-            dir = vector(offset, -1.0):normalized()
-            self:hitPaddle()
-        end
-        
-        ball.velocity = dir * ball.velocity:len()
-       
-        if col.other == goal then
-            ball:setCurrentState("onGoal")
-        end
-        
-        if col.other.tag == "side" then
-            self:hitSide()
-        else
-            removeItemFrom(blocks, col.other)
-            world:remove(col.other)
-            self.blockCount = self.blockCount - 1
-            self:hitTarget()
-            if self.blockCount == 0 then
-                self:gotoState("gameover", self.myScorer:getScore())
-            end
-        end
-      end
-    end
-  end
-end
 
 function ingame:hitTarget()
     self.myScorer:hitTarget()
@@ -157,12 +90,6 @@ end
 
 function ingame:getCombo()
     return self.myScorer:getCombo()
-end
-
-
-local function updatePlayerOnPaddle(self, dt)
-    local pl, pt = self.paddle.l, self.paddle.t
-    ball:moveTo(pl + (self.paddle.w / 2) - (ball.w / 2), pt - (ball.h + 1))
 end
 
 local function drawBall()
@@ -217,6 +144,85 @@ local function newBall()
         world:move(self, l, t)
     end
 
+    function result:update(dt, context)
+        self.states[self.currentState](self, context, dt)
+    end
+
+    function result.updatePlayer(self, context, dt)
+      local dx = self.velocity.x * dt
+      local dy = self.velocity.y * dt
+      
+      if dx ~= 0 or dy ~= 0 then
+        local future_l, future_t = self.l + dx, self.t + dy
+        local cols, len = world:check(self, future_l, future_t)
+        if len == 0 then
+            self:moveTo(future_l, future_t)
+        else
+          local col, tl, tt, bl, bt
+          while len > 0 do
+            col = cols[1]
+            
+            
+            local hitPaddle = col.other == context.paddle
+            
+            tl,tt,_,_,bl,bt = col:getBounce()
+            self:moveTo(tl, tt)
+            
+            cols, len = world:check(self, bl, bt)
+            if len == 0 then
+                self:moveTo(bl, bt)
+            end
+            
+            a = vector(tl, tt)
+            b = vector(bl, bt)
+            dir = b - a
+            dir = dir:normalized()
+            
+            if hitPaddle then
+                local playerCenterX = tl + (self.w / 2)
+                local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
+                local collisionCenter = paddleCenterX - playerCenterX
+                local offset = -(collisionCenter / (context.paddle.w / 2))
+                offset = math.clamp(-1, offset, 1)
+                dir = vector(offset, -1.0):normalized()
+                context:hitPaddle()
+            end
+            
+            self.velocity = dir * self.velocity:len()
+           
+            if col.other == goal then
+                self:setCurrentState("onGoal")
+            end
+            
+            if col.other.tag == "side" then
+                context:hitSide()
+            else
+                removeItemFrom(blocks, col.other)
+                world:remove(col.other)
+                context.blockCount = context.blockCount - 1
+                context:hitTarget()
+                if context.blockCount == 0 then
+                    context:gotoState("gameover", context.myScorer:getScore())
+                end
+            end
+          end
+        end
+      end
+    end
+
+    function result.updatePlayerOnPaddle(self, context, dt)
+        local pl, pt = context.paddle.l, context.paddle.t
+        self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 1))
+        
+        if love.keyboard.isDown(" ") then        
+            self:setCurrentState("playing")
+            local dir = vector(0 + (math.random() *0.2), 1):normalized()
+            self.velocity = dir * self.speed
+        end
+    end
+    
+    result.states = {playing = result.updatePlayer, onGoal = result.updatePlayerOnPaddle}
+    
     return result
 end
 
@@ -247,6 +253,13 @@ function ingame:buildTargets()
     self.blockCount = count
 end
 
+local function newPaddle()
+    local paddle = addBlock(350, 600-32, 100, 16, "side")
+    paddle.velocityX = 0;
+    paddle.speed = 700;
+    return paddle
+end
+
 function ingame:enteredState()
     ball = newBall()
 
@@ -259,17 +272,12 @@ function ingame:enteredState()
     addBlock(0,      32,  32, 600-32*2, "side")
     addBlock(800-32, 32,  32, 600-32*2, "side")
 
-    self.paddle = addBlock(350, 600-32, 100, 16, "side")
-    self.paddle.velocityX = 0;
-    self.paddle.speed = 700;
+    self.paddle = newPaddle()
 
     goal = addBlock(0, 600-16, 800, 16, "side")
 
     self:buildTargets()
     
-    playerStates.playing = updatePlayer
-    playerStates.onGoal = updatePlayerOnPaddle
-    ball:setCurrentState("onGoal")
 
     
     self.timer = timer:new()
@@ -286,7 +294,7 @@ end
 function ingame:update(dt)
     self.timer:update(dt)
     self:updatePaddle(dt)
-    playerStates[ball.currentState](self, dt)
+    ball:update(dt, self)
 end
 
 function ingame:draw()
