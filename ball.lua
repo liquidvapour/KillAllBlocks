@@ -1,0 +1,118 @@
+local Class = require "lib.middleclass"
+local vector = require "hump.vector"
+
+local Ball = Class("Ball")
+
+local function drawBox(box, r,g,b)
+  love.graphics.setColor(r,g,b,70)
+  love.graphics.rectangle("fill", box.l, box.t, box.w, box.h)
+  love.graphics.setColor(r,g,b)
+  love.graphics.rectangle("line", box.l, box.t, box.w, box.h)
+end
+
+
+function Ball:initialize(world, timer)
+    self.l = 50
+    self.t = 50
+    self.w = 20
+    self.h = 20
+    self.velocity = vector(50, 267)
+    self.speed = 300
+    self.inplay = true
+    self.currentState = "onGoal"
+    self.r = 255
+    self.g = 0
+    self.b = 0
+    self.states = {playing = self.updatePlayer, onGoal = self.updatePlayerOnPaddle}
+    self.world = world
+    self.world:add(self, self.l, self.t, self.w, self.h)
+
+    local target = {r = 0, g = 255}
+    timer:tween(1, self, target, "in-quint")
+
+end
+
+function Ball:setCurrentState(state)
+    self.currentState = state
+end
+
+function Ball:moveTo(l, t)
+    self.l, self.t = l, t
+    self.world:move(self, l, t)
+end
+
+function Ball:update(dt, context)
+    self.states[self.currentState](self, context, dt)
+end
+
+function Ball:draw()
+    drawBox(self, self.r, self.g, self.b)
+end
+
+function Ball.updatePlayer(self, context, dt)
+  local dx = self.velocity.x * dt
+  local dy = self.velocity.y * dt
+  
+  if dx ~= 0 or dy ~= 0 then
+    local future_l, future_t = self.l + dx, self.t + dy
+    local cols, len = self.world:check(self, future_l, future_t)
+    if len == 0 then
+        self:moveTo(future_l, future_t)
+    else
+      local col, tl, tt, bl, bt
+      while len > 0 do
+        col = cols[1]
+        
+        local hitPaddle = col.other == context.paddle
+        
+        tl,tt,_,_,bl,bt = col:getBounce()
+        self:moveTo(tl, tt)
+        
+        cols, len = self.world:check(self, bl, bt)
+        if len == 0 then
+            self:moveTo(bl, bt)
+        end
+        
+        a = vector(tl, tt)
+        b = vector(bl, bt)
+        dir = b - a
+        dir = dir:normalized()
+        
+        if hitPaddle then
+            local playerCenterX = tl + (self.w / 2)
+            local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
+            local collisionCenter = paddleCenterX - playerCenterX
+            local offset = -(collisionCenter / (context.paddle.w / 2))
+            offset = math.clamp(-1, offset, 1)
+            dir = vector(offset, -1.0):normalized()
+            context:hitPaddle()
+        end
+        
+        self.velocity = dir * self.velocity:len()
+       
+        if col.other == context.goal then
+            self:setCurrentState("onGoal")
+        end
+        
+        if col.other.tag == "side" then
+            context:hitSide()
+        else
+            context:hitBlock(col.other)
+        end
+      end
+    end
+  end
+end
+
+function Ball.updatePlayerOnPaddle(self, context, dt)
+    local pl, pt = context.paddle.l, context.paddle.t
+    self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 1))
+    
+    if love.keyboard.isDown(" ") then        
+        self:setCurrentState("playing")
+        local dir = vector(0 + (math.random() *0.2), 1):normalized()
+        self.velocity = dir * self.speed
+    end
+end
+
+return Ball

@@ -1,4 +1,5 @@
 local Game = require "game"
+local Ball = require "ball"
 
 local bump = require "bump"
 local bump_debug = require "bump_debug"
@@ -28,12 +29,7 @@ end
 -- World creation
 local world 
 
-
--- ball functions
-local ball
-
 local blocks 
-local goal
 local hitGoal = false
 local playerStates = {}
 local ready = false
@@ -76,6 +72,16 @@ function ingame:hitSide()
     self.myScorer:hitSide()
 end
 
+function ingame:hitBlock(block)
+    removeItemFrom(blocks, block)
+    world:remove(block)
+    self.blockCount = self.blockCount - 1
+    self:hitTarget()
+    if self.blockCount == 0 then
+        self:gotoState("gameover", self.myScorer:getScore())
+    end
+end
+
 function ingame:hitPaddle()
     self.myScorer:hitPaddle()
 end
@@ -90,10 +96,6 @@ end
 
 function ingame:getCombo()
     return self.myScorer:getCombo()
-end
-
-local function drawBall()
-    drawBox(ball, ball.r, ball.g, ball.b)
 end
 
 -- Block functions
@@ -126,105 +128,6 @@ local function drawDebug()
   love.graphics.print(statistics, 630, 580)
 end
 
-local function newBall()
-    local result = {
-        l = 50, t = 50, w = 20, h = 20, 
-        velocity = vector(50, 267), 
-        speed = 300, 
-        inplay = true, 
-        currentState = "onGoal",
-        r = 255, g = 0, b = 0}
-
-    function result:setCurrentState(state)
-        self.currentState = state
-    end
-    
-    function result:moveTo(l, t)
-        self.l, self.t = l, t
-        world:move(self, l, t)
-    end
-
-    function result:update(dt, context)
-        self.states[self.currentState](self, context, dt)
-    end
-
-    function result.updatePlayer(self, context, dt)
-      local dx = self.velocity.x * dt
-      local dy = self.velocity.y * dt
-      
-      if dx ~= 0 or dy ~= 0 then
-        local future_l, future_t = self.l + dx, self.t + dy
-        local cols, len = world:check(self, future_l, future_t)
-        if len == 0 then
-            self:moveTo(future_l, future_t)
-        else
-          local col, tl, tt, bl, bt
-          while len > 0 do
-            col = cols[1]
-            
-            
-            local hitPaddle = col.other == context.paddle
-            
-            tl,tt,_,_,bl,bt = col:getBounce()
-            self:moveTo(tl, tt)
-            
-            cols, len = world:check(self, bl, bt)
-            if len == 0 then
-                self:moveTo(bl, bt)
-            end
-            
-            a = vector(tl, tt)
-            b = vector(bl, bt)
-            dir = b - a
-            dir = dir:normalized()
-            
-            if hitPaddle then
-                local playerCenterX = tl + (self.w / 2)
-                local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
-                local collisionCenter = paddleCenterX - playerCenterX
-                local offset = -(collisionCenter / (context.paddle.w / 2))
-                offset = math.clamp(-1, offset, 1)
-                dir = vector(offset, -1.0):normalized()
-                context:hitPaddle()
-            end
-            
-            self.velocity = dir * self.velocity:len()
-           
-            if col.other == goal then
-                self:setCurrentState("onGoal")
-            end
-            
-            if col.other.tag == "side" then
-                context:hitSide()
-            else
-                removeItemFrom(blocks, col.other)
-                world:remove(col.other)
-                context.blockCount = context.blockCount - 1
-                context:hitTarget()
-                if context.blockCount == 0 then
-                    context:gotoState("gameover", context.myScorer:getScore())
-                end
-            end
-          end
-        end
-      end
-    end
-
-    function result.updatePlayerOnPaddle(self, context, dt)
-        local pl, pt = context.paddle.l, context.paddle.t
-        self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 1))
-        
-        if love.keyboard.isDown(" ") then        
-            self:setCurrentState("playing")
-            local dir = vector(0 + (math.random() *0.2), 1):normalized()
-            self.velocity = dir * self.speed
-        end
-    end
-    
-    result.states = {playing = result.updatePlayer, onGoal = result.updatePlayerOnPaddle}
-    
-    return result
-end
 
 function ingame:buildTargets()
     math.randomseed(love.timer.getTime())
@@ -261,10 +164,9 @@ local function newPaddle()
 end
 
 function ingame:enteredState()
-    ball = newBall()
-
+    
     world = bump.newWorld()
-    world:add(ball, ball.l, ball.t, ball.w, ball.h)
+    
 
     blocks = {}
     
@@ -274,7 +176,7 @@ function ingame:enteredState()
 
     self.paddle = newPaddle()
 
-    goal = addBlock(0, 600-16, 800, 16, "side")
+    self.goal = addBlock(0, 600-16, 800, 16, "side")
 
     self:buildTargets()
     
@@ -285,8 +187,7 @@ function ingame:enteredState()
     ready = false
     self.timer:add(1, function() ready = true end)
 
-    local target = {r = 0, g = 255}
-    self.timer:tween(1, ball, target, "in-quint")
+    self.ball = Ball:new(world, self.timer)
     
     self.myScorer = scorer:new(self)
 end
@@ -294,12 +195,12 @@ end
 function ingame:update(dt)
     self.timer:update(dt)
     self:updatePaddle(dt)
-    ball:update(dt, self)
+    self.ball:update(dt, self)
 end
 
 function ingame:draw()
   drawBlocks()
-  drawBall()
+  self.ball:draw()
   if shouldDrawDebug then drawDebug() end
   self:drawMessage()
 end
