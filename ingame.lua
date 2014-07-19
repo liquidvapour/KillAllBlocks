@@ -1,5 +1,6 @@
 local Game = require "game"
 local Ball = require "ball"
+local Paddle = require "paddle"
 
 local bump = require "bump"
 local bump_debug = require "bump_debug"
@@ -100,8 +101,8 @@ function ingame:drawMessage()
   love.graphics.print("score: "..self:getScore()..", combo: "..self:getCombo(), 100, 10)
 end
 
-local function drawDebug()
-  bump_debug.draw(world)
+function ingame:drawDebug()
+  bump_debug.draw(self.world)
 
   local statistics = ("fps: %d, mem: %dKB"):format(love.timer.getFPS(), collectgarbage("count"))
   love.graphics.setColor(255, 255, 255)
@@ -136,35 +137,6 @@ function ingame:buildTargets()
     self.blockCount = count
 end
 
-local function newPaddle(context)
-
-    local paddle = {l = 350, t = 600-32, w = 100, h = 16, tag = "side", velocityX = 0, speed = 700}
-    context.world:add(paddle, paddle.l, paddle.t, paddle.w, paddle.h)
-    
-    function paddle:update(dt)
-        if not context.ready then return end
-
-        local dx, dy = 0, 0
-        if context.useMouse then
-            self.l = love.mouse.getX() - (self.w/2)
-        else
-            if love.keyboard.isDown("right") then
-                dx = self.speed * dt
-            elseif love.keyboard.isDown("left") then
-                dx = -self.speed * dt
-            end
-            self.l = self.l + dx
-        end
-        context.world:move(self, self.l, self.t)
-    end
-
-    function paddle:draw()
-        drawBox(paddle, 255, 0, 0)
-    end
-    
-    return paddle
-    
-end
 
 function ingame:enteredState()
     
@@ -176,7 +148,7 @@ function ingame:enteredState()
     self:addBlock(0,      32,  32, 600-32*2, "side")
     self:addBlock(800-32, 32,  32, 600-32*2, "side")
 
-    self.paddle = newPaddle(self)
+    self.paddle = Paddle:new(self)
 
     self.goal = self:addBlock(0, 600-16, 800, 16, "side")
 
@@ -204,7 +176,7 @@ function ingame:draw()
   self:drawBlocks()
   self.ball:draw()
   self.paddle:draw()
-  if shouldDrawDebug then drawDebug() end
+  if shouldDrawDebug then self:drawDebug() end
   self:drawMessage()
 end
 
