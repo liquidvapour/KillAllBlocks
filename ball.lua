@@ -21,7 +21,7 @@ function Ball:initialize(world, timer)
     
     self.image = love.graphics.newImage("resources/ball.png")
     self.image:setFilter("nearest", "nearest")
-    self.quad = love.graphics.newQuad(0, 0, self.w, self.h, self.image:getWidth(), self.image:getHeight())
+    self.quad = love.graphics.newQuad(0, 0, self.w, self.h, 32, 32)
 
     local target = {r = 0, g = 255}
     timer:tween(1, self, target, "in-quint")

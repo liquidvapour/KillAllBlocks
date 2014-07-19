@@ -27,9 +27,7 @@ local function drawBox(box, r,g,b)
 end
 
 -- World creation
-local world 
 
-local blocks 
 local hitGoal = false
 local playerStates = {}
 --local currentState
@@ -42,23 +40,6 @@ local function removeItemFrom(tbl, item)
     end
 end
 
-function ingame:updatePaddle(dt)
-    if not self.ready then return end
-
-    local dx, dy = 0, 0
-    if self.useMouse then
-        self.paddle.l = love.mouse.getX() - (self.paddle.w/2)
-    else
-        if love.keyboard.isDown("right") then
-            dx = self.paddle.speed * dt
-        elseif love.keyboard.isDown("left") then
-            dx = -self.paddle.speed * dt
-        end
-        self.paddle.l = self.paddle.l + dx
-    end
-    
-    world:move(self.paddle, self.paddle.l, self.paddle.t)
-end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
@@ -72,8 +53,8 @@ function ingame:hitSide()
 end
 
 function ingame:hitBlock(block)
-    removeItemFrom(blocks, block)
-    world:remove(block)
+    removeItemFrom(self.blocks, block)
+    self.world:remove(block)
     self.blockCount = self.blockCount - 1
     self:hitTarget()
     if self.blockCount == 0 then
@@ -98,15 +79,15 @@ function ingame:getCombo()
 end
 
 -- Block functions
-local function addBlock(l,t,w,h, tag)
+function ingame:addBlock(l,t,w,h, tag)
   local block = {l=l,t=t,w=w,h=h,tag=tag}
-  blocks[#blocks+1] = block
-  world:add(block, l,t,w,h)
+  self.blocks[#self.blocks+1] = block
+  self.world:add(block, l,t,w,h)
   return block
 end
 
-local function drawBlocks()
-  for _,block in ipairs(blocks) do
+function ingame:drawBlocks()
+  for _,block in ipairs(self.blocks) do
     drawBox(block, 255,0,0)
   end
 end
@@ -144,7 +125,7 @@ function ingame:buildTargets()
         for y = 0, numRows - 1 do
             tl = 100 + (x * (targetWidth))
             tr = 100 + (y * (targetHeight))
-            addBlock(tl,
+            self:addBlock(tl,
                      tr,
                      targetWidth - 1,
                      targetHeight - 1)
@@ -155,26 +136,49 @@ function ingame:buildTargets()
     self.blockCount = count
 end
 
-local function newPaddle()
-    local paddle = addBlock(350, 600-32, 100, 16, "side")
-    paddle.velocityX = 0;
-    paddle.speed = 700;
+local function newPaddle(context)
+
+    local paddle = {l = 350, t = 600-32, w = 100, h = 16, tag = "side", velocityX = 0, speed = 700}
+    context.world:add(paddle, paddle.l, paddle.t, paddle.w, paddle.h)
+    
+    function paddle:update(dt)
+        if not context.ready then return end
+
+        local dx, dy = 0, 0
+        if context.useMouse then
+            self.l = love.mouse.getX() - (self.w/2)
+        else
+            if love.keyboard.isDown("right") then
+                dx = self.speed * dt
+            elseif love.keyboard.isDown("left") then
+                dx = -self.speed * dt
+            end
+            self.l = self.l + dx
+        end
+        context.world:move(self, self.l, self.t)
+    end
+
+    function paddle:draw()
+        drawBox(paddle, 255, 0, 0)
+    end
+    
     return paddle
+    
 end
 
 function ingame:enteredState()
     
-    world = bump.newWorld()
+    self.world = bump.newWorld()
     
-    blocks = {}
+    self.blocks = {}
     
-    addBlock(0,       0, 800,       32, "side")
-    addBlock(0,      32,  32, 600-32*2, "side")
-    addBlock(800-32, 32,  32, 600-32*2, "side")
+    self:addBlock(0,       0, 800,       32, "side")
+    self:addBlock(0,      32,  32, 600-32*2, "side")
+    self:addBlock(800-32, 32,  32, 600-32*2, "side")
 
-    self.paddle = newPaddle()
+    self.paddle = newPaddle(self)
 
-    self.goal = addBlock(0, 600-16, 800, 16, "side")
+    self.goal = self:addBlock(0, 600-16, 800, 16, "side")
 
     self:buildTargets()
     
@@ -183,7 +187,7 @@ function ingame:enteredState()
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
 
-    self.ball = Ball:new(world, self.timer)
+    self.ball = Ball:new(self.world, self.timer)
     
     self.myScorer = scorer:new(self)
     
@@ -192,13 +196,14 @@ end
 
 function ingame:update(dt)
     self.timer:update(dt)
-    self:updatePaddle(dt)
+    self.paddle:update(dt)
     self.ball:update(dt, self)
 end
 
 function ingame:draw()
-  drawBlocks()
+  self:drawBlocks()
   self.ball:draw()
+  self.paddle:draw()
   if shouldDrawDebug then drawDebug() end
   self:drawMessage()
 end
