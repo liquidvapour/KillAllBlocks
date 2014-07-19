@@ -32,7 +32,6 @@ local world
 local blocks 
 local hitGoal = false
 local playerStates = {}
-local ready = false
 --local currentState
 
 local function removeItemFrom(tbl, item)
@@ -44,7 +43,7 @@ local function removeItemFrom(tbl, item)
 end
 
 function ingame:updatePaddle(dt)
-    if not ready then return end
+    if not self.ready then return end
 
     local dx, dy = 0, 0
     if self.useMouse then
@@ -184,8 +183,8 @@ function ingame:enteredState()
     
     self.timer = timer:new()
     
-    ready = false
-    self.timer:add(1, function() ready = true end)
+    self.ready = false
+    self.timer:add(1, function() self.ready = true end)
 
     self.ball = Ball:new(world, self.timer)
     

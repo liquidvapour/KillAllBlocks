@@ -3,11 +3,11 @@ local vector = require "hump.vector"
 
 local Ball = Class("Ball")
 
-local function drawBox(box, r,g,b)
+function Ball:drawBox(r,g,b)
   love.graphics.setColor(r,g,b,70)
-  love.graphics.rectangle("fill", box.l, box.t, box.w, box.h)
+  love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
   love.graphics.setColor(r,g,b)
-  love.graphics.rectangle("line", box.l, box.t, box.w, box.h)
+  love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
 end
 
 
@@ -19,21 +19,21 @@ function Ball:initialize(world, timer)
     self.velocity = vector(50, 267)
     self.speed = 300
     self.inplay = true
-    self.currentState = "onGoal"
+    
     self.r = 255
     self.g = 0
     self.b = 0
-    self.states = {playing = self.updatePlayer, onGoal = self.updatePlayerOnPaddle}
+    self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
     self.world = world
     self.world:add(self, self.l, self.t, self.w, self.h)
 
     local target = {r = 0, g = 255}
     timer:tween(1, self, target, "in-quint")
-
+    self:setCurrentState("updateOnPaddle")
 end
 
 function Ball:setCurrentState(state)
-    self.currentState = state
+    self.currentState = self.states[state]
 end
 
 function Ball:moveTo(l, t)
@@ -42,14 +42,14 @@ function Ball:moveTo(l, t)
 end
 
 function Ball:update(dt, context)
-    self.states[self.currentState](self, context, dt)
+    self:currentState(context, dt)
 end
 
 function Ball:draw()
-    drawBox(self, self.r, self.g, self.b)
+    self:drawBox(self.r, self.g, self.b)
 end
 
-function Ball.updatePlayer(self, context, dt)
+function Ball:updateInFlight(context, dt)
   local dx = self.velocity.x * dt
   local dy = self.velocity.y * dt
   
@@ -91,7 +91,7 @@ function Ball.updatePlayer(self, context, dt)
         self.velocity = dir * self.velocity:len()
        
         if col.other == context.goal then
-            self:setCurrentState("onGoal")
+            self:setCurrentState("updateOnPaddle")
         end
         
         if col.other.tag == "side" then
@@ -104,12 +104,12 @@ function Ball.updatePlayer(self, context, dt)
   end
 end
 
-function Ball.updatePlayerOnPaddle(self, context, dt)
+function Ball:updateOnPaddle(context, dt)
     local pl, pt = context.paddle.l, context.paddle.t
     self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 1))
     
-    if love.keyboard.isDown(" ") then        
-        self:setCurrentState("playing")
+    if context.ready and love.keyboard.isDown(" ") then        
+        self:setCurrentState("updateInFlight")
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
         self.velocity = dir * self.speed
     end
