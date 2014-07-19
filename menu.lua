@@ -31,6 +31,7 @@ function menuState:enteredState()
     
     self.backg = Background:new(self.backgroundImage, 0, 0, 50, -1, -1)    
     self.backg2 = Background:new(self.backgroundImage, 0, 65, 20, 1, 0)
+    love.graphics.setBackgroundColor(0, 0, 0)
 end
 
 function menuState:exitedState()

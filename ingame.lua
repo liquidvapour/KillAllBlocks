@@ -166,7 +166,6 @@ function ingame:enteredState()
     
     world = bump.newWorld()
     
-
     blocks = {}
     
     addBlock(0,       0, 800,       32, "side")
@@ -179,8 +178,6 @@ function ingame:enteredState()
 
     self:buildTargets()
     
-
-    
     self.timer = timer:new()
     
     self.ready = false
@@ -189,6 +186,8 @@ function ingame:enteredState()
     self.ball = Ball:new(world, self.timer)
     
     self.myScorer = scorer:new(self)
+    
+    love.graphics.setBackgroundColor(36, 36, 39)
 end
 
 function ingame:update(dt)

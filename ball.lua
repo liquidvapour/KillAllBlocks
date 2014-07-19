@@ -3,14 +3,6 @@ local vector = require "hump.vector"
 
 local Ball = Class("Ball")
 
-function Ball:drawBox(r,g,b)
-  love.graphics.setColor(r,g,b,70)
-  love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
-  love.graphics.setColor(r,g,b)
-  love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
-end
-
-
 function Ball:initialize(world, timer)
     self.l = 50
     self.t = 50
@@ -26,6 +18,10 @@ function Ball:initialize(world, timer)
     self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
     self.world = world
     self.world:add(self, self.l, self.t, self.w, self.h)
+    
+    self.image = love.graphics.newImage("resources/ball.png")
+    self.image:setFilter("nearest", "nearest")
+    self.quad = love.graphics.newQuad(0, 0, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
     local target = {r = 0, g = 255}
     timer:tween(1, self, target, "in-quint")
@@ -113,6 +109,15 @@ function Ball:updateOnPaddle(context, dt)
         local dir = vector(0 + (math.random() *0.2), 1):normalized()
         self.velocity = dir * self.speed
     end
+end
+
+function Ball:drawBox(r,g,b)
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(self.image, self.quad, self.l, self.t)
+  --love.graphics.setColor(r,g,b,70)
+  --love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
+  --love.graphics.setColor(r,g,b)
+  --love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
 end
 
 return Ball
