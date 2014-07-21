@@ -7,6 +7,7 @@ local bump_debug = require "bump_debug"
 local vector = require "hump.vector"
 local timer = require "hump.timer"
 local scorer = require "scorer"
+local Side = require "side"
 
 local ingame = Game:addState("ingame")
 
@@ -79,17 +80,37 @@ function ingame:getCombo()
 end
 
 -- Block functions
-function ingame:addBlock(l,t,w,h, tag)
-  local block = {l=l,t=t,w=w,h=h,tag=tag}
+function ingame:addToBlockList(block)
   self.blocks[#self.blocks+1] = block
-  self.world:add(block, l,t,w,h)
-  return block
 end
 
+local function newBlock(world, l,t,w,h, tag)
+    local block = {l=l,t=t,w=w,h=h,tag=tag}
+    world:add(block, l,t,w,h)
+
+    function block:draw(r,g,b)
+        love.graphics.setColor(r,g,b,70)
+        love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
+        love.graphics.setColor(r,g,b)
+        love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
+    end
+
+    return block
+end
+
+function ingame:addBlock(l,t,w,h, tag)
+    local block = {l=l,t=t,w=w,h=h,tag=tag}
+    self:addToBlockList(block)
+    self.world:add(block, l,t,w,h)
+
+    return block
+end
+
+
 function ingame:drawBlocks()
-  for _,block in ipairs(self.blocks) do
-    drawBox(block, 255,0,0)
-  end
+    for _,block in ipairs(self.blocks) do
+        block:draw(255,0,0)
+    end
 end
 
 -- Message/debug functions
@@ -112,8 +133,6 @@ end
 function ingame:buildTargets()
     math.randomseed(love.timer.getTime())
 
-    self.blockCount = 30
-
     local targetWidth = 100
     local targetHeight = 20
     local numRows = 6
@@ -125,10 +144,7 @@ function ingame:buildTargets()
         for y = 0, numRows - 1 do
             tl = 100 + (x * (targetWidth))
             tr = 100 + (y * (targetHeight))
-            self:addBlock(tl,
-                     tr,
-                     targetWidth - 1,
-                     targetHeight - 1)
+            self:addToBlockList(newBlock(self.world, tl, tr, targetWidth - 1, targetHeight - 1))
             count = count + 1
         end
     end 
@@ -143,13 +159,13 @@ function ingame:enteredState()
     
     self.blocks = {}
     
-    self:addBlock(0,       0, 800,       32, "side")
-    self:addBlock(0,      32,  32, 600-32*2, "side")
-    self:addBlock(800-32, 32,  32, 600-32*2, "side")
+    self:addToBlockList(Side:new(self.world, 0,       0, 800,       32))
+    self:addToBlockList(Side:new(self.world, 0,      32,  32, 600-32*2))
+    self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-32*2))
 
     self.paddle = Paddle:new(self)
 
-    self.goal = self:addBlock(0, 600-16, 800, 16, "side")
+    self.goal = self:addToBlockList(Side:new(self.world, 0, 600-16, 800, 16))
 
     self:buildTargets()
     
