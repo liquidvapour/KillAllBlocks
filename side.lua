@@ -26,15 +26,17 @@ function Side:initialize(world, l, t, w, h, r, g, b)
     
     world:add(self, l, t, w, h)
     
-    self.canvas = getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
     self.quad = love.graphics.newQuad(0, 0, w, h, 32, 32)     
 end
 
 function Side:draw()
     love.graphics.push()
     love.graphics.setColor(self.r, self.g, self.b, 255)
-    love.graphics.draw(self.canvas, self.quad, self.l, self.t)
+    love.graphics.draw(canvas, self.quad, self.l, self.t)
     love.graphics.pop()
 end
+
+local canvas = getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
+
 
 return Side
