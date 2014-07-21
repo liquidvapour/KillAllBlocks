@@ -4,7 +4,6 @@ local Side = Class("Side")
 
 local function getDrawableFromTileMap(resourceName, tl, tt, tw, th)
     local image = love.graphics.newImage(resourceName)
-    image:setWrap("repeat", "repeat")
     local quad = love.graphics.newQuad(tl, tt, tw, th, image:getWidth(), image:getHeight())
     local canvas = love.graphics.newCanvas(tw, th)
     canvas:setWrap("repeat", "repeat")
