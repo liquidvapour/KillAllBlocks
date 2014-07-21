@@ -85,8 +85,8 @@ function ingame:addToBlockList(block)
 end
 
 local function newBlock(world, l,t,w,h, tag)
-    local block = {l=l,t=t,w=w,h=h,tag=tag}
-    world:add(block, l,t,w,h)
+    local block = {l = l, t = t, w = w, h = h, tag = tag}
+    world:add(block, l, t, w, h)
 
     function block:draw(r,g,b)
         love.graphics.setColor(r,g,b,70)
