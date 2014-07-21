@@ -165,7 +165,8 @@ function ingame:enteredState()
 
     self.paddle = Paddle:new(self)
 
-    self.goal = self:addToBlockList(Side:new(self.world, 0, 600-16, 800, 16))
+    self.goal = Side:new(self.world, 0, 600-16, 800, 16)
+    self:addToBlockList(self.goal)
 
     self:buildTargets()
     
