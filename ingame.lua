@@ -1,13 +1,14 @@
 local Game = require "game"
 local Ball = require "ball"
 local Paddle = require "paddle"
+local Side = require "side"
+local Target = require "target"
 
 local bump = require "bump"
 local bump_debug = require "bump_debug"
 local vector = require "hump.vector"
 local timer = require "hump.timer"
 local scorer = require "scorer"
-local Side = require "side"
 
 local ingame = Game:addState("ingame")
 
@@ -82,19 +83,6 @@ function ingame:addToBlockList(block)
   self.blocks[#self.blocks+1] = block
 end
 
-local function newBlock(world, l,t,w,h, tag)
-    local block = {l = l, t = t, w = w, h = h, tag = tag}
-    world:add(block, l, t, w, h)
-
-    function block:draw(r,g,b)
-        love.graphics.setColor(r,g,b,70)
-        love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
-        love.graphics.setColor(r,g,b)
-        love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
-    end
-
-    return block
-end
 
 function ingame:drawBlocks()
     for _,block in ipairs(self.blocks) do
@@ -120,20 +108,25 @@ end
 
 
 function ingame:buildTargets()
-    math.randomseed(love.timer.getTime())
 
-    local targetWidth = 100
-    local targetHeight = 20
+    local targetWidth = 128
+    local targetHeight = 32
     local numRows = 6
-    local numColumns = 6
+    local numColumns = 5
     local count = 0
     
-    local tl, tr
+    
+    local totalWidth = numColumns * targetWidth
+    local screenWidth = love.window.getWidth()
+    
+    local xOffset = (screenWidth - totalWidth) / 2
+    
+    local tl, tt
     for x = 0, numColumns - 1 do
         for y = 0, numRows - 1 do
-            tl = 100 + (x * (targetWidth))
-            tr = 100 + (y * (targetHeight))
-            self:addToBlockList(newBlock(self.world, tl, tr, targetWidth - 1, targetHeight - 1))
+            tl = xOffset + (x * (targetWidth))
+            tt = 100 + (y * (targetHeight))
+            self:addToBlockList(Target:new(self.world, tl, tt, targetWidth, targetHeight))
             count = count + 1
         end
     end 
@@ -143,6 +136,7 @@ end
 
 
 function ingame:enteredState()
+    math.randomseed(love.timer.getTime())
     
     self.world = bump.newWorld()
     

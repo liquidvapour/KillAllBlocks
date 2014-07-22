@@ -1,19 +1,8 @@
 local Class = require "lib.middleclass"
-
-local function getDrawableFromTileMap(resourceName, tl, tt, tw, th)
-    local image = love.graphics.newImage(resourceName)
-    local quad = love.graphics.newQuad(tl, tt, tw, th, image:getWidth(), image:getHeight())
-    local canvas = love.graphics.newCanvas(tw, th)
-    canvas:setWrap("repeat", "repeat")
-    love.graphics.setCanvas(canvas)
-    canvas:clear()
-    love.graphics.draw(image, quad, 0, 0)
-    love.graphics.setCanvas()
-    return canvas
-end
+local GraphicsUtils = require "lib.utils"
 
 local Side = Class("Side")
-Side.canvas = getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
+Side.canvas = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
 
 function Side:initialize(world, l, t, w, h, r, g, b)
     self.l = l
