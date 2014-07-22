@@ -1,7 +1,5 @@
 local Class = require "lib.middleclass"
 
-local Side = Class("Side")
-
 local function getDrawableFromTileMap(resourceName, tl, tt, tw, th)
     local image = love.graphics.newImage(resourceName)
     local quad = love.graphics.newQuad(tl, tt, tw, th, image:getWidth(), image:getHeight())
@@ -14,6 +12,9 @@ local function getDrawableFromTileMap(resourceName, tl, tt, tw, th)
     return canvas
 end
 
+local Side = Class("Side")
+Side.canvas = getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
+
 function Side:initialize(world, l, t, w, h, r, g, b)
     self.l = l
     self.t = t
@@ -22,7 +23,7 @@ function Side:initialize(world, l, t, w, h, r, g, b)
     self.r = r or 255
     self.g = g or 255
     self.b = b or 255
-    self.tag = "side" --needed for balls collision system.
+    self.tag = "side" --needed for ball's collision system.
     
     world:add(self, l, t, w, h)
     
@@ -32,11 +33,8 @@ end
 function Side:draw()
     love.graphics.push()
     love.graphics.setColor(self.r, self.g, self.b, 255)
-    love.graphics.draw(canvas, self.quad, self.l, self.t)
+    love.graphics.draw(Side.canvas, self.quad, self.l, self.t)
     love.graphics.pop()
 end
-
-local canvas = getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 64, 32, 32)
-
 
 return Side

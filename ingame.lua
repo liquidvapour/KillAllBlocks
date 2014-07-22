@@ -44,7 +44,6 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
-
 function ingame:hitTarget()
     self.myScorer:hitTarget()
 end
@@ -79,7 +78,6 @@ function ingame:getCombo()
     return self.myScorer:getCombo()
 end
 
--- Block functions
 function ingame:addToBlockList(block)
   self.blocks[#self.blocks+1] = block
 end
@@ -97,15 +95,6 @@ local function newBlock(world, l,t,w,h, tag)
 
     return block
 end
-
-function ingame:addBlock(l,t,w,h, tag)
-    local block = {l=l,t=t,w=w,h=h,tag=tag}
-    self:addToBlockList(block)
-    self.world:add(block, l,t,w,h)
-
-    return block
-end
-
 
 function ingame:drawBlocks()
     for _,block in ipairs(self.blocks) do
