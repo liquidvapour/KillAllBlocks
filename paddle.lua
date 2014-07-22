@@ -1,12 +1,14 @@
 local Class = require "lib.middleclass"
-
+local Utils = require "lib.utils"
 local Paddle = Class("Paddle")
 
 function Paddle:initialize(context)
-    self.l = 350
-    self.t = 600-32
-    self.w = 100
+    self.w = 128
     self.h = 16
+    
+    self.l = (love.window.getWidth() - self.w) / 2
+    self.t = 600-32    
+    
     self.tag = "side"
     self.velocityX = 0
     self.speed = 700
@@ -14,7 +16,7 @@ function Paddle:initialize(context)
     
     context.world:add(self, self.l, self.t, self.w, self.h)
     
-    self.image = love.graphics.newImage("resources/paddle.png")
+    self.image = Utils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 128, 32, 32, 16)
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(0, 0, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 

@@ -6,8 +6,8 @@ local Ball = Class("Ball")
 function Ball:initialize(world, timer)
     self.l = 50
     self.t = 50
-    self.w = 20
-    self.h = 20
+    self.w = 32
+    self.h = 32
     self.velocity = vector(50, 267)
     self.speed = 300
     self.inplay = true
@@ -19,9 +19,9 @@ function Ball:initialize(world, timer)
     self.world = world
     self.world:add(self, self.l, self.t, self.w, self.h)
     
-    self.image = love.graphics.newImage("resources/ball.png")
+    self.image = love.graphics.newImage("resources/simpleGraphics_tiles32x32_0.png")
     self.image:setFilter("nearest", "nearest")
-    self.quad = love.graphics.newQuad(0, 0, self.w, self.h, self.image:getWidth(), self.image:getHeight())
+    self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
     local target = {r = 0, g = 255}
     timer:tween(1, self, target, "in-quint")

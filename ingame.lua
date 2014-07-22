@@ -21,13 +21,6 @@ local instructions = [[
     delete: run garbage collector
 ]]
 
--- helper function
-local function drawBox(box, r,g,b)
-  love.graphics.setColor(r,g,b,70)
-  love.graphics.rectangle("fill", box.l, box.t, box.w, box.h)
-  love.graphics.setColor(r,g,b)
-  love.graphics.rectangle("line", box.l, box.t, box.w, box.h)
-end
 
 -- World creation
 
