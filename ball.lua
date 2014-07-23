@@ -12,9 +12,10 @@ function Ball:initialize(world, timer)
     self.speed = 300
     self.inplay = true
     
-    self.r = 255
+    self.r = 0
     self.g = 0
     self.b = 0
+    self.a = 0
     self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
     self.world = world
     self.world:add(self, self.l, self.t, self.w, self.h)
@@ -23,8 +24,18 @@ function Ball:initialize(world, timer)
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
-    local target = {r = 0, g = 255}
-    timer:tween(1, self, target, "in-quint")
+    
+    self.timer = timer
+    self:reset()
+end
+
+function Ball:reset()
+    self.r = 0
+    self.g = 0
+    self.b = 0
+    self.a = 0
+    local target = {r = 255, g = 255, b = 255, a = 255}
+    self.timer:tween(1, self, target, "in-quint")
     self:setCurrentState("updateOnPaddle")
 end
 
@@ -42,7 +53,7 @@ function Ball:update(dt, context)
 end
 
 function Ball:draw()
-    self:drawBox(self.r, self.g, self.b)
+    self:drawBox(self.r, self.g, self.b, self.a)
 end
 
 function Ball:updateInFlight(context, dt)
@@ -87,7 +98,8 @@ function Ball:updateInFlight(context, dt)
         self.velocity = dir * self.velocity:len()
        
         if col.other == context.goal then
-            self:setCurrentState("updateOnPaddle")
+            --self:setCurrentState("updateOnPaddle")
+            self:reset()
         end
         
         if col.other.tag == "side" then
@@ -111,8 +123,8 @@ function Ball:updateOnPaddle(context, dt)
     end
 end
 
-function Ball:drawBox(r,g,b)
-    love.graphics.setColor(255, 255, 255, 255)
+function Ball:drawBox(r, g, b, a)
+    love.graphics.setColor(r, g, b, a)
     love.graphics.draw(self.image, self.quad, self.l, self.t)
 end
 
