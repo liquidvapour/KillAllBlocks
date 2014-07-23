@@ -40,8 +40,10 @@ function Paddle:update(dt)
 end
 
 function Paddle:drawBox()
+    love.graphics.push()
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(self.image, self.quad, self.l, self.t)
+    love.graphics.pop()
 end
 
 function Paddle:draw()

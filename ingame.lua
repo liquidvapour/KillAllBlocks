@@ -86,6 +86,8 @@ end
 -- Message/debug functions
 function ingame:drawMessage()
   local msg = instructions:format(tostring(shouldDrawDebug))
+  love.graphics.setColor(0, 0, 0, 170)
+  love.graphics.rectangle("fill", 95, 9, 140, 15)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
   love.graphics.print("score: "..self:getScore()..", combo: "..self:getCombo(), 100, 10)
@@ -105,7 +107,7 @@ function ingame:buildTargets()
     local targetWidth = 128
     local targetHeight = 32
     local numRows = 6
-    local numColumns = 5
+    local numColumns = 4
     local count = 0
     
     

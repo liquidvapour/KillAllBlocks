@@ -114,10 +114,6 @@ end
 function Ball:drawBox(r,g,b)
     love.graphics.setColor(255, 255, 255, 255)
     love.graphics.draw(self.image, self.quad, self.l, self.t)
-  --love.graphics.setColor(r,g,b,70)
-  --love.graphics.rectangle("fill", self.l, self.t, self.w, self.h)
-  --love.graphics.setColor(r,g,b)
-  --love.graphics.rectangle("line", self.l, self.t, self.w, self.h)
 end
 
 return Ball
