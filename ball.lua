@@ -24,18 +24,17 @@ function Ball:initialize(world, timer)
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
-    
     self.timer = timer
     self:reset()
 end
 
 function Ball:reset()
-    self.r = 0
-    self.g = 0
-    self.b = 0
+    self.r = 255
+    self.g = 255
+    self.b = 255
     self.a = 0
     local target = {r = 255, g = 255, b = 255, a = 255}
-    self.timer:tween(1, self, target, "in-quint")
+    self.timer:tween(1, self, target, "in-elastic")
     self:setCurrentState("updateOnPaddle")
 end
 
@@ -98,7 +97,6 @@ function Ball:updateInFlight(context, dt)
         self.velocity = dir * self.velocity:len()
        
         if col.other == context.goal then
-            --self:setCurrentState("updateOnPaddle")
             self:reset()
         end
         

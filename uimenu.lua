@@ -13,6 +13,7 @@ function Menu:initialize(image)
     self.upPressed = false
     self.enterPressed = false
     self.onNewGame = nil
+    self.onOptions = nil
 end
 
 function Menu:createTitle(image)
@@ -89,7 +90,9 @@ function Menu:createMenuItems()
         function() 
             if self.onNewGame then self.onNewGame() end 
         end))
-    result:add(self:createItem("resources/options.png", 380, itemPause + 0.1))
+    result:add(self:createItem(
+        "resources/options.png", 380, itemPause + 0.1, 
+        function() if self.onOptions then self.onOptions() end  end))
     result:add(self:createItem("resources/quit.png", 410, itemPause + 0.2, function() love.event.quit() end))
     return result
 end

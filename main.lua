@@ -6,6 +6,7 @@ local game = require "game"
 require "ingame"
 require "menu"
 require "gameover"
+require "captureName"
 
 function love.load()
     myGame = game:new()

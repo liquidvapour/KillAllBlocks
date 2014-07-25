@@ -1,6 +1,8 @@
 local Class = require "lib.middleclass"
 local Stateful = require "lib.stateful"
 
+local HighScores = require "highScores"
+
 local Game = Class("Game"):include(Stateful)
 
 function Game:printInCenter(message)
@@ -20,6 +22,7 @@ end
 
 function Game:initialize()
     self.useMouse = false
+    self.scores = HighScores:new()
 end
 
 function Game:draw()

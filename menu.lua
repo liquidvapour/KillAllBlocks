@@ -25,6 +25,7 @@ function menuState:enteredState()
     local image = love.graphics.newImage("resources/title.png")
     self.menu = uimenu:new(image)
     self.menu.onNewGame = function() self:gotoState("ingame") end
+    self.menu.onOptions = function() self:gotoState("gameover", 1000) end
     
     self.backgroundImage = love.graphics.newImage("resources/clouds01.png")
     self.backgroundImage:setWrap("repeat", "repeat")
