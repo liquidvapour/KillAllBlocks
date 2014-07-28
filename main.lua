@@ -9,7 +9,7 @@ require "gameover"
 require "captureName"
 
 function love.load()
-    --local result = love.window.setMode(800, 600)
+    local result = love.window.setMode(800, 600, {fullscreen = true})
     print(string.format("setMode result: %s", result))
     print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
 

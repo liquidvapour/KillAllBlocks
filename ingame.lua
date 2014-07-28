@@ -102,7 +102,7 @@ function ingame:drawDebug()
 end
 
 
-function ingame:buildTargets()
+function ingame:setupTargets()
 
     local targetWidth = 128
     local targetHeight = 32
@@ -117,6 +117,9 @@ function ingame:buildTargets()
     local xOffset = (screenWidth - totalWidth) / 2
     
     local tl, tt
+    
+    Target.drawCanvas()
+    
     for x = 0, numColumns - 1 do
         for y = 0, numRows - 1 do
             tl = xOffset + (x * (targetWidth))
@@ -129,6 +132,12 @@ function ingame:buildTargets()
     self.blockCount = count
 end
 
+function ingame:setupSides()
+    Side.drawCanvas()
+    self:addToBlockList(Side:new(self.world, 0,       0, 800,       32))
+    self:addToBlockList(Side:new(self.world, 0,      32,  32, 600-32*2))
+    self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-32*2))
+end
 
 function ingame:enteredState()
     math.randomseed(love.timer.getTime())
@@ -137,16 +146,14 @@ function ingame:enteredState()
     
     self.blocks = {}
     
-    self:addToBlockList(Side:new(self.world, 0,       0, 800,       32))
-    self:addToBlockList(Side:new(self.world, 0,      32,  32, 600-32*2))
-    self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-32*2))
-
+    self:setupSides()
+    
     self.paddle = Paddle:new(self)
 
     self.goal = Side:new(self.world, 0, 600-16, 800, 16)
     self:addToBlockList(self.goal)
 
-    self:buildTargets()
+    self:setupTargets()
     
     self.timer = timer:new()
     
