@@ -59,10 +59,8 @@ function Menu:createSelection()
     end
     
     function result:draw()
-        love.graphics.push()
         love.graphics.setColor(255, 255, 255, self.a)
         love.graphics.draw(self.image, self.l, self.t)
-        love.graphics.pop()
     end
     
     function result:select()
@@ -164,7 +162,6 @@ function Menu:update(dt)
 end
 
 function Menu:draw()
-    love.graphics.push()
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.title.image, self.title.x, self.title.y)
     --love.graphics.rectangle("fill", self.title.x, self.title.y, self.title.width, self.title.height)
@@ -173,7 +170,6 @@ function Menu:draw()
         love.graphics.draw(v.image, v.l - (v.w / 2), v.t)
     end
     self.selection:draw()
-    love.graphics.pop()
 end
 
 return Menu

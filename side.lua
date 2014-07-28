@@ -20,10 +20,8 @@ function Side:initialize(world, l, t, w, h, r, g, b)
 end
 
 function Side:draw()
-    love.graphics.push()
     love.graphics.setColor(self.r, self.g, self.b, 255)
     love.graphics.draw(Side.canvas, self.quad, self.l, self.t)
-    love.graphics.pop()
 end
 
 return Side
