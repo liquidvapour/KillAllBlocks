@@ -7,7 +7,7 @@ function Paddle:initialize(context)
     self.h = 16
     
     self.l = (love.window.getWidth() - self.w) / 2
-    self.t = 600-32    
+    self.t = 600-40
     
     self.tag = "side"
     self.velocityX = 0
@@ -30,11 +30,13 @@ function Paddle:update(dt)
         self.l = love.mouse.getX() - (self.w/2)
     else
         if love.keyboard.isDown("right") then
-            dx = self.speed * dt
+            self.velocityX = self.speed 
         elseif love.keyboard.isDown("left") then
-            dx = -self.speed * dt
+            self.velocityX = -self.speed
+        else
+            self.velocityX = 0
         end
-        self.l = self.l + dx
+        self.l = self.l + (self.velocityX * dt)
     end
     self.context.world:move(self, self.l, self.t)
 end

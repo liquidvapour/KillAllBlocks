@@ -91,6 +91,8 @@ function ingame:drawMessage()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
   love.graphics.print("score: "..self:getScore()..", combo: "..self:getCombo(), 100, 10)
+  love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
+  love.graphics.print(("update time: %.3fms"):format(self.updateTime * 1000), 630, 510)
 end
 
 function ingame:drawDebug()
@@ -99,6 +101,7 @@ function ingame:drawDebug()
   local statistics = ("fps: %d, mem: %dKB"):format(love.timer.getFPS(), collectgarbage("count"))
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(statistics, 630, 580)
+  
 end
 
 
@@ -135,8 +138,8 @@ end
 function ingame:setupSides()
     Side.drawCanvas()
     self:addToBlockList(Side:new(self.world, 0,       0, 800,       32))
-    self:addToBlockList(Side:new(self.world, 0,      32,  32, 600-32*2))
-    self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-32*2))
+    self:addToBlockList(Side:new(self.world, 0,      32,  32, 600-((32*2)+8)))
+    self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-((32*2)+8)))
 end
 
 function ingame:enteredState()
@@ -150,7 +153,7 @@ function ingame:enteredState()
     
     self.paddle = Paddle:new(self)
 
-    self.goal = Side:new(self.world, 0, 600-16, 800, 16)
+    self.goal = Side:new(self.world, 0, 600-24, 800, 24)
     self:addToBlockList(self.goal)
 
     self:setupTargets()
@@ -165,20 +168,29 @@ function ingame:enteredState()
     self.myScorer = scorer:new(self)
     
     love.graphics.setBackgroundColor(36, 36, 39)
+    
+    self.drawTime = 0
+    self.updateTime = 0
 end
 
 function ingame:update(dt)
+    local startTime = love.timer.getTime()
     self.timer:update(dt)
     self.paddle:update(dt)
     self.ball:update(dt, self)
+    local endTime = love.timer.getTime()
+    self.updateTime = endTime - startTime
 end
 
 function ingame:draw()
-  self:drawBlocks()
-  self.ball:draw()
-  self.paddle:draw()
-  if shouldDrawDebug then self:drawDebug() end
-  self:drawMessage()
+    local startTime = love.timer.getTime()
+    self:drawBlocks()
+    self.ball:draw()
+    self.paddle:draw()
+    if shouldDrawDebug then self:drawDebug() end
+    self:drawMessage()
+    local endTime = love.timer.getTime()
+    self.drawTime = endTime - startTime
 end
 
 function ingame:escPressed()
