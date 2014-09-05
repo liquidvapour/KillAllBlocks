@@ -14,6 +14,7 @@ function Menu:initialize(image)
     self.enterPressed = false
     self.onNewGame = nil
     self.onOptions = nil
+    self.pressedKeys = {}
 end
 
 function Menu:createTitle(image)
@@ -124,28 +125,20 @@ function Menu:onEnterClicked()
     self.selection:select()
 end
 
+function Menu:onPressed(key, action)
+    if love.keyboard.isDown(key) and not self.pressedKeys[key] then
+        self.pressedKeys[key] = true
+        action(self)
+    elseif not love.keyboard.isDown(key) and self.pressedKeys[key] then
+        self.pressedKeys[key] = false
+    end
+end
+
+
 function Menu:doKeys()
-    if love.keyboard.isDown('down') then
-        self.downPressed = true
-    elseif self.downPressed then
-        self.downPressed = false
-        self:onDownClicked()
-    end
-    
-    if love.keyboard.isDown("up") then
-        self.upPressed = true
-    elseif self.upPressed then
-        self.upPressed = false
-        self:onUpClicked()
-    end
-    
-    if love.keyboard.isDown("return") then
-        self.enterPressed = true
-    elseif self.enterPressed then
-        print("enter clicked")
-        self.enterPressed = false
-        self:onEnterClicked()
-    end
+    self:onPressed('down', self.onDownClicked)
+    self:onPressed('up', self.onUpClicked)
+    self:onPressed('return', self.onEnterClicked)
 end
 
 function Menu:update(dt)
@@ -164,7 +157,6 @@ end
 function Menu:draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(self.title.image, self.title.x, self.title.y)
-    --love.graphics.rectangle("fill", self.title.x, self.title.y, self.title.width, self.title.height)
     
     for i, v in ipairs(self.menuItems) do
         love.graphics.draw(v.image, v.l - (v.w / 2), v.t)

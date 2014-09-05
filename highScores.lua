@@ -37,9 +37,7 @@ end
 
 function HighScores:add(name, score)
     self.highScores:add({name = name, score = score})
-    self.highScores:sort(function(a, b) 
-        return a.score > b.score
-    end)
+    self.highScores:sort(function(a, b) return a.score > b.score end)
     self.highScores:removeTail()
 end
 
