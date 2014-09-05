@@ -87,10 +87,16 @@ end
 function ingame:drawMessage()
   local msg = instructions:format(tostring(shouldDrawDebug))
   love.graphics.setColor(0, 0, 0, 170)
-  love.graphics.rectangle("fill", 95, 9, 140, 15)
+  love.graphics.rectangle("fill", 95, 0, 310, 32)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
-  love.graphics.print("score: "..self:getScore()..", combo: "..self:getCombo(), 100, 10)
+  local currentFont = love.graphics.getFont()
+
+  love.graphics.setFont(self.scoreFont)
+  love.graphics.printf(self:getScore(), 100, 0, 150, 'right')
+  love.graphics.printf(self:getCombo(), 250, 0, 150, 'right')
+  love.graphics.setFont(currentFont)
+  
   love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
   love.graphics.print(("update time: %.3fms"):format(self.updateTime * 1000), 630, 510)
 end
@@ -166,6 +172,8 @@ function ingame:enteredState()
     self.myScorer = scorer:new(self)
     
     love.graphics.setBackgroundColor(36, 36, 39)
+    
+    self.scoreFont = love.graphics.newImageFont("resources/shwingItalic.png", "0123456789")
     
     self.drawTime = 0
     self.updateTime = 0
