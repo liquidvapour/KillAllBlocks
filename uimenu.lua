@@ -107,12 +107,6 @@ function Menu:createItem(resource, t, pause, onSelected, r, g, b)
     return menuItem
 end
 
-function createMenuItemTweenFunction(menuItem, duration, tweenType)
-    return function() 
-        menuItem.tween = tween.new(duration, menuItem, {l = love.window.getWidth() / 2, a = 255}, tweenType) 
-    end
-end
-
 function Menu:onDownClicked()
     self.selection:gotoNext()
 end
@@ -162,6 +156,12 @@ function Menu:draw()
         love.graphics.draw(v.image, v.l - (v.w / 2), v.t)
     end
     self.selection:draw()
+end
+
+function createMenuItemTweenFunction(menuItem, duration, tweenType)
+    return function() 
+        menuItem.tween = tween.new(duration, menuItem, {l = love.window.getWidth() / 2, a = 255}, tweenType) 
+    end
 end
 
 return Menu

@@ -22,11 +22,7 @@ local instructions = [[
 ]]
 
 
--- World creation
-
-local hitGoal = false
 local playerStates = {}
---local currentState
 
 local function removeItemFrom(tbl, item)
     for key, value in pairs(tbl) do
@@ -58,6 +54,10 @@ end
 
 function ingame:hitPaddle()
     self.myScorer:hitPaddle()
+end
+
+function ingame:hitGoal()
+    self.myScorer:hitGoal()
 end
 
 function ingame:getScore()
@@ -101,9 +101,7 @@ function ingame:drawDebug()
   local statistics = ("fps: %d, mem: %dKB"):format(love.timer.getFPS(), collectgarbage("count"))
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(statistics, 630, 580)
-  
 end
-
 
 function ingame:setupTargets()
 

@@ -97,7 +97,7 @@ function Ball:updateInFlight(context, dt)
         self.velocity = dir * self.velocity:len()
        
         if col.other == context.goal then
-            self:reset()
+            self:hitGoal(context)
         end
         
         if col.other.tag == "side" then
@@ -108,6 +108,11 @@ function Ball:updateInFlight(context, dt)
       end
     end
   end
+end
+
+function Ball:hitGoal(context)
+    context:hitGoal()
+    self:reset()
 end
 
 function Ball:updateOnPaddle(context, dt)
