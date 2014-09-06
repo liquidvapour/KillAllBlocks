@@ -3,7 +3,11 @@ local vector = require "hump.vector"
 
 local Ball = Class("Ball")
 
-function Ball:initialize(world, timer)
+function Ball:initialize(world, timer, context)
+    self.world = world
+    self.timer = timer
+    self.context = context
+
     self.l = 50
     self.t = 50
     self.w = 32
@@ -17,14 +21,13 @@ function Ball:initialize(world, timer)
     self.b = 0
     self.a = 0
     self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
-    self.world = world
     self.world:add(self, self.l, self.t, self.w, self.h)
     
     self.image = love.graphics.newImage("resources/simpleGraphics_tiles32x32_0.png")
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
-    self.timer = timer
+    
     self:reset()
 end
 
@@ -47,8 +50,8 @@ function Ball:moveTo(l, t)
     self.world:move(self, l, t)
 end
 
-function Ball:update(dt, context)
-    self:currentState(context, dt)
+function Ball:update(dt)
+    self:currentState(self.context, dt)
 end
 
 function Ball:draw()
@@ -97,7 +100,7 @@ function Ball:updateInFlight(context, dt)
         self.velocity = dir * self.velocity:len()
        
         if col.other == context.goal then
-            self:hitGoal(context)
+            self:hitGoal()
         end
         
         if col.other.tag == "side" then
@@ -110,8 +113,8 @@ function Ball:updateInFlight(context, dt)
   end
 end
 
-function Ball:hitGoal(context)
-    context:hitGoal()
+function Ball:hitGoal()
+    self.context:hitGoal()
     self:reset()
 end
 

@@ -10,6 +10,9 @@ local vector = require "hump.vector"
 local timer = require "hump.timer"
 local scorer = require "scorer"
 
+local NumberBox = require "ui.numberbox"
+local utils = require "utils"
+
 local ingame = Game:addState("ingame")
 
 local instructions = [[
@@ -34,14 +37,6 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
-function ingame:hitTarget()
-    self.myScorer:hitTarget()
-end
-
-function ingame:hitSide()
-    self.myScorer:hitSide()
-end
-
 function ingame:hitBlock(block)
     removeItemFrom(self.blocks, block)
     self.world:remove(block)
@@ -54,10 +49,22 @@ end
 
 function ingame:hitPaddle()
     self.myScorer:hitPaddle()
+    self:updateUiScores()
 end
 
 function ingame:hitGoal()
     self.myScorer:hitGoal()
+    self:updateUiScores()
+end
+
+function ingame:hitTarget()
+    self.myScorer:hitTarget()
+    self:updateUiScores()
+end
+
+function ingame:hitSide()
+    self.myScorer:hitSide()
+    self:updateUiScores()
 end
 
 function ingame:getScore()
@@ -72,10 +79,14 @@ function ingame:getCombo()
     return self.myScorer:getCombo()
 end
 
+function ingame:updateUiScores()
+    self.scoreBox:setValue(self.myScorer:getScore())
+    self.comboBox:setValue(self.myScorer:getCombo())
+end
+
 function ingame:addToBlockList(block)
   self.blocks[#self.blocks+1] = block
 end
-
 
 function ingame:drawBlocks()
     for _,block in ipairs(self.blocks) do
@@ -93,8 +104,8 @@ function ingame:drawMessage()
   local currentFont = love.graphics.getFont()
 
   love.graphics.setFont(self.scoreFont)
-  love.graphics.printf(self:getScore(), 100, 0, 150, 'right')
-  love.graphics.printf(self:getCombo(), 250, 0, 150, 'right')
+  --love.graphics.printf(self:getScore(), 100, 0, 150, 'right')
+  --love.graphics.printf(self:getCombo(), 250, 0, 150, 'right')
   love.graphics.setFont(currentFont)
   
   love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
@@ -167,7 +178,7 @@ function ingame:enteredState()
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
 
-    self.ball = Ball:new(self.world, self.timer)
+    self.ball = Ball:new(self.world, self.timer, self)
     
     self.myScorer = scorer:new(self)
     
@@ -175,17 +186,33 @@ function ingame:enteredState()
     
     self.scoreFont = love.graphics.newImageFont("resources/shwingItalic.png", "0123456789")
     
+    self.scoreBox = NumberBox(100, 0, 150, self.scoreFont)
+    self.comboBox = NumberBox(250, 0, 150, self.scoreFont)
+    
     self.drawTime = 0
     self.updateTime = 0
+    
+    self.thingsToUpdate = utils.newList()
+    self.thingsToUpdate:add(self.timer)
+    self.thingsToUpdate:add(self.paddle)
+    self.thingsToUpdate:add(self.ball)
+    self.thingsToUpdate:add(self.scoreBox)
+    self.thingsToUpdate:add(self.comboBox)
+end
+
+function ingame:updateAllTheThings(dt)
+    for t in self.thingsToUpdate:iterate() do
+        t:update(dt)
+    end
 end
 
 function ingame:update(dt)
     local startTime = love.timer.getTime()
-    self.timer:update(dt)
-    self.paddle:update(dt)
-    self.ball:update(dt, self)
+        
+    self:updateAllTheThings(dt)
+    
     local endTime = love.timer.getTime()
-    self.updateTime = endTime - startTime
+    self.updateTime = endTime - startTime    
 end
 
 function ingame:draw()
@@ -197,6 +224,9 @@ function ingame:draw()
     self:drawMessage()
     local endTime = love.timer.getTime()
     self.drawTime = endTime - startTime
+    
+    self.scoreBox:draw()
+    self.comboBox:draw()
 end
 
 function ingame:escPressed()

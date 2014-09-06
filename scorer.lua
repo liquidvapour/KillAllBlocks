@@ -16,7 +16,6 @@ function Scorer:hitSide()
 end
 
 function Scorer:hitPaddle()
---    self:resetCombo()
     self.combo = self.combo - 1
     if self.combo < 0 then
         self.combo = 0
