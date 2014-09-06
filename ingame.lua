@@ -101,12 +101,6 @@ function ingame:drawMessage()
   love.graphics.rectangle("fill", 95, 0, 310, 32)
   love.graphics.setColor(255, 255, 255)
   love.graphics.print(msg, 550, 10)
-  local currentFont = love.graphics.getFont()
-
-  love.graphics.setFont(self.scoreFont)
-  --love.graphics.printf(self:getScore(), 100, 0, 150, 'right')
-  --love.graphics.printf(self:getCombo(), 250, 0, 150, 'right')
-  love.graphics.setFont(currentFont)
   
   love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
   love.graphics.print(("update time: %.3fms"):format(self.updateTime * 1000), 630, 510)

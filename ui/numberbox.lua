@@ -14,7 +14,7 @@ end
 function NumberBox:setValue(value)
     if self.value == value then return end
     
-    self.tween = tween.new(0.1, self, {value = value})
+    self.tween = tween.new(0.2, self, {value = value})
 end
 
 function NumberBox:update(dt)
