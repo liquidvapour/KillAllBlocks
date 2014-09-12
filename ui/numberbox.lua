@@ -22,7 +22,7 @@ function NumberBox:setValue(value)
 end
 
 local function sinIt(time, begin, change, duration) return change * math.sin(time / duration * (math.pi)) + begin end
-local scaleTime = 0.25
+local scaleTime = 0.15
 
 function NumberBox:update(dt)
     if self.tween then
@@ -38,7 +38,7 @@ function NumberBox:update(dt)
     if self.animating then
         if self.animTime <= scaleTime then
             self.animTime = self.animTime + dt
-            self.scale = sinIt(self.animTime, 1, 1.15 - 1, scaleTime)
+            self.scale = sinIt(self.animTime, 1, 1.075 - 1, scaleTime)
         else
             self.animating = false
             self.scale = 1

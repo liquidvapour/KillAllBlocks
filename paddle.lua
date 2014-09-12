@@ -11,7 +11,7 @@ function Paddle:initialize(context)
     
     self.tag = "side"
     self.velocityX = 0
-    self.speed = 700
+    self.speed = 600
     self.context = context
     
     context.world:add(self, self.l, self.t, self.w, self.h)
