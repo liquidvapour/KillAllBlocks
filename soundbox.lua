@@ -4,6 +4,7 @@ local SoundBox = Class("SoundBox")
 
 function SoundBox:initialize()
     self.pip = love.audio.newSource("resources/sound/pip.wav", "static")    
+    self.splat = love.audio.newSource("resources/sound/splat.wav", "static")    
 end
 
 local function playSource(source)
@@ -19,7 +20,7 @@ function SoundBox:hitSide()
 end
 
 function SoundBox:hitTarget()
-    playSource(self.pip)
+    playSource(self.splat)
 end
 
 return SoundBox 
