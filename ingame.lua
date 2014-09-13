@@ -64,14 +64,14 @@ function ingame:hitTarget()
     print("hitTarget")
     self.myScorer:hitTarget()
     self:updateUiScores()
-    self.soundBox:hitWall()
+    self.soundBox:hitTarget()
 end
 
 function ingame:hitSide()
     print("hitSide")
     self.myScorer:hitSide()
     self:updateUiScores()
-    self.soundBox:hitWall()
+    self.soundBox:hitSide()
 end
 
 function ingame:getScore()
