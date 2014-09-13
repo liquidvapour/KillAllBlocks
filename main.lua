@@ -28,6 +28,7 @@ end
 -- Non-player keypresses
 function love.keypressed(k)
   if k=="escape" then myGame:escPressed() end
+  if k=="return" and myGame.returnPressed then myGame:returnPressed() end
   if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
   if k=="delete" then collectgarbage("collect") end
 end

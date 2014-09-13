@@ -50,5 +50,4 @@ function HighScores:draw(l, t)
     end
 end
 
-
 return HighScores
