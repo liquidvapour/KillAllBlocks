@@ -6,6 +6,7 @@ function SoundBox:initialize()
     self.pip = love.audio.newSource("resources/sound/pip.wav", "static")    
     self.splat = love.audio.newSource("resources/sound/splat.wav", "static")    
     self.plink = love.audio.newSource("resources/sound/plink.wav", "static")    
+    self.explosion = love.audio.newSource("resources/sound/explosion.wav", "static")    
 end
 
 local function playSource(source)
@@ -26,6 +27,10 @@ end
 
 function SoundBox:hitPaddle()
     playSource(self.plink)
+end
+
+function SoundBox:hitGoal()
+    playSource(self.explosion)
 end
 
 return SoundBox 

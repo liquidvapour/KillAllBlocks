@@ -59,6 +59,7 @@ function ingame:hitGoal()
     print("hitGoal")
     self.myScorer:hitGoal()
     self:updateUiScores()
+    self.soundBox:hitGoal()
 end
 
 function ingame:hitTarget()
