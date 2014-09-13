@@ -52,6 +52,7 @@ function ingame:hitPaddle()
     print("hitPaddle")
     self.myScorer:hitPaddle()
     self:updateUiScores()
+    self.soundBox:hitPaddle()
 end
 
 function ingame:hitGoal()
