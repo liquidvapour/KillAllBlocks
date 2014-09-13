@@ -44,6 +44,7 @@ function ingame:hitBlock(block)
     self.blockCount = self.blockCount - 1
     self:hitTarget()
     if self.blockCount == 0 then
+        self.soundBox:gameover()
         self:gotoState("gameover", self.myScorer:getScore())
     end
 end
