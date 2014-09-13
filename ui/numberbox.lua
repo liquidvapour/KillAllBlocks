@@ -16,7 +16,7 @@ end
 function NumberBox:setValue(value)
     if self.value == value then return end
     
-    self.tween = tween.new(0.2, self, {value = value})
+    self.tween = tween.new(0.3, self, {value = value})
 
     self.startAnim = true
 end
