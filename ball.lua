@@ -101,12 +101,12 @@ function Ball:updateInFlight(context, dt)
        
         if col.other == context.goal then
             self:hitGoal()
-        end
-        
-        if col.other.tag == "side" then
-            context:hitSide()
-        else
-            context:hitBlock(col.other)
+        elseif not hitPaddle then
+            if col.other.tag == "side" then
+                context:hitSide()
+            else
+                context:hitBlock(col.other)
+            end
         end
       end
     end

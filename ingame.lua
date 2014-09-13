@@ -9,6 +9,7 @@ local bump_debug = require "bump_debug"
 local vector = require "hump.vector"
 local timer = require "hump.timer"
 local scorer = require "scorer"
+local soundBox = require "soundbox"
 
 local NumberBox = require "ui.numberbox"
 local utils = require "utils"
@@ -48,23 +49,29 @@ function ingame:hitBlock(block)
 end
 
 function ingame:hitPaddle()
+    print("hitPaddle")
     self.myScorer:hitPaddle()
     self:updateUiScores()
 end
 
 function ingame:hitGoal()
+    print("hitGoal")
     self.myScorer:hitGoal()
     self:updateUiScores()
 end
 
 function ingame:hitTarget()
+    print("hitTarget")
     self.myScorer:hitTarget()
     self:updateUiScores()
+    self.soundBox:hitWall()
 end
 
 function ingame:hitSide()
+    print("hitSide")
     self.myScorer:hitSide()
     self:updateUiScores()
+    self.soundBox:hitWall()
 end
 
 function ingame:getScore()
@@ -157,7 +164,6 @@ function ingame:enteredState()
     self.world = bump.newWorld()
     
     self.blocks = {}
-    
     self:setupSides()
     
     self.paddle = Paddle:new(self)
@@ -168,6 +174,8 @@ function ingame:enteredState()
     self:setupTargets()
     
     self.timer = timer:new()
+
+    self.soundBox = soundBox:new()
     
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
