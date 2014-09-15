@@ -9,7 +9,6 @@ require "gameover"
 require "captureName"
 
 local canvas
-local screenQuad
 local mesh
 
 local function getScreenMesh(canvas)
@@ -39,17 +38,23 @@ local function getScreenMesh(canvas)
     return love.graphics.newMesh(vertices, canvas, "fan")
 end
 
+sceneWidth, sceneHeight = 800, 600
+
 function love.load()
-    local result = love.window.setMode(1024, 768, {fullscreen = false})
+    --local result = love.window.setMode(1024, 768, {fullscreen = false})
+    local result = love.window.setMode(1920, 1080, {fullscreen = true})
     print(string.format("setMode result: %s", result))
     print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
 
     myGame = game:new()
     myGame:gotoState("menu")
     
-    canvas = love.graphics.newCanvas(800, 600)
-    screenQuad = love.graphics.newQuad(0, 0, 1024, 768, 800, 600)
+    canvas = love.graphics.newCanvas(sceneWidth, sceneHeight)
     mesh = getScreenMesh(canvas)
+    
+    local originalBlendMode = love.graphics.getBlendMode()
+    print('originalBlendMode: '..originalBlendMode)
+
 end
 
 function love.update(dt)
@@ -59,9 +64,10 @@ end
 function love.draw()
     canvas:clear()
     love.graphics.setCanvas(canvas)
+    love.graphics.setBlendMode('alpha')
     myGame:draw()
     love.graphics.setCanvas()
-    
+    love.graphics.setBlendMode('premultiplied')
     love.graphics.draw(mesh, 0, 0)
 end
 
