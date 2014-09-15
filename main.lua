@@ -10,6 +10,34 @@ require "captureName"
 
 local canvas
 local screenQuad
+local mesh
+
+local function getScreenMesh(canvas)
+    local vertices = {
+        {
+            0, 0, -- position
+            0, 0, -- texture coordinates
+            255, 255, 255
+        },
+        {
+            love.window.getWidth(), 0, -- position
+            1, 0, -- texture coordinates
+            255, 255, 255
+        },
+        {
+            love.window.getWidth(), love.window.getHeight(), -- position
+            1, 1, -- texture coordinates
+            255, 255, 255
+        },
+        {
+            0, love.window.getHeight(), -- position
+            0, 1, -- texture coordinates
+            255, 255, 255
+        }
+    }
+        
+    return love.graphics.newMesh(vertices, canvas, "fan")
+end
 
 function love.load()
     local result = love.window.setMode(1024, 768, {fullscreen = false})
@@ -21,6 +49,7 @@ function love.load()
     
     canvas = love.graphics.newCanvas(800, 600)
     screenQuad = love.graphics.newQuad(0, 0, 1024, 768, 800, 600)
+    mesh = getScreenMesh(canvas)
 end
 
 function love.update(dt)
@@ -33,7 +62,7 @@ function love.draw()
     myGame:draw()
     love.graphics.setCanvas()
     
-    love.graphics.draw(canvas, screenQuad, 0, 0)
+    love.graphics.draw(mesh, 0, 0)
 end
 
 -- Non-player keypresses

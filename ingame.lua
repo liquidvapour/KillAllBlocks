@@ -134,7 +134,7 @@ function ingame:setupTargets()
     
     
     local totalWidth = numColumns * targetWidth
-    local screenWidth = love.window.getWidth()
+    local screenWidth = 800--love.window.getWidth()
     
     local xOffset = (screenWidth - totalWidth) / 2
     

@@ -22,7 +22,7 @@ function Menu:createTitle(image)
     result.image = image
     result.width = 300
     result.height = 200
-    result.x = love.window.getWidth()/2-(result.width/2)
+    result.x = 800/2-(result.width/2)
     result.y = -result.height
     result.tween = tween.new(2.65, result, {y = 75}, 'outBounce')
     return result
@@ -33,7 +33,7 @@ function Menu:createSelection()
     local result = {
         image = image, 
         currentItemIndex = 1, 
-        l = (love.window.getWidth() / 2) - (300 / 2), 
+        l = (800 / 2) - (300 / 2), 
         t = self.menuItems[1].t, 
         tween = nil,
         a = 0
@@ -160,7 +160,7 @@ end
 
 function createMenuItemTweenFunction(menuItem, duration, tweenType)
     return function() 
-        menuItem.tween = tween.new(duration, menuItem, {l = love.window.getWidth() / 2, a = 255}, tweenType) 
+        menuItem.tween = tween.new(duration, menuItem, {l = 800 / 2, a = 255}, tweenType) 
     end
 end
 
