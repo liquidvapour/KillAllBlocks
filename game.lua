@@ -6,8 +6,8 @@ local HighScores = require "highScores"
 local Game = Class("Game"):include(Stateful)
 
 function Game:printInCenter(message)
-    local windowWidth = love.window.getWidth()
-    local windowHeight = love.window.getHeight()
+    local windowWidth = sceneWidth
+    local windowHeight = sceneHeight
     
     local windowCenter = windowWidth / 2
     
