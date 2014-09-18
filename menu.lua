@@ -8,8 +8,8 @@ function menuState:draw()
     self.backg:draw()
     self.backg2:draw()
 
-    local windowWidth = love.window.getWidth()
-    local windowHeight = love.window.getHeight()
+    local windowWidth = 800
+    local windowHeight = 600
    
     local windowCenter = windowWidth / 2
     

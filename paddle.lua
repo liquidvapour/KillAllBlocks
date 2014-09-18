@@ -6,7 +6,7 @@ function Paddle:initialize(context)
     self.w = 128
     self.h = 16
     
-    self.l = (love.window.getWidth() - self.w) / 2
+    self.l = (sceneWidth - self.w) / 2
     self.t = 600-40
     
     self.tag = "side"
