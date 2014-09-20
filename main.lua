@@ -39,10 +39,14 @@ local function getScreenMesh(canvas)
 end
 
 sceneWidth, sceneHeight = 800, 600
+shader = nil 
 
 function love.load()
-    local result = love.window.setMode(1024, 768, {fullscreen = false})
-    --local result = love.window.setMode(1920, 1080, {fullscreen = true})
+    local outputWidth, outputHeight = 1024, 768
+    --local outputWidth, outputHeight = 1920, 1080
+    --local result = love.window.setMode(1024, 768, {fullscreen = false})
+    local result = love.window.setMode(outputWidth, outputHeight, {fullscreen = false})
+    --local result = love.window.setMode(outputWidth, outputHeight, {fullscreen = true})
     print(string.format("setMode result: %s", result))
     print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
 
@@ -56,6 +60,10 @@ function love.load()
     local originalBlendMode = love.graphics.getBlendMode()
     print('originalBlendMode: '..originalBlendMode)
 
+    shader = love.graphics.newShader('shaders/scanline-3x.frag')
+    --shader:send('inputSize', {sceneWidth, sceneHeight})
+    --shader:send('outputSize', {outputWidth, outputHeight})
+    --shader:send('textureSize', {sceneWidth, sceneHeight})
 end
 
 function love.update(dt)
@@ -70,7 +78,9 @@ function love.draw()
     love.graphics.setCanvas()
     love.graphics.setBlendMode('premultiplied')
     
+    love.graphics.setShader(shader)
     love.graphics.draw(mesh, 0, 0)
+    love.graphics.setShader()
 end
 
 -- Non-player keypresses
