@@ -17,6 +17,8 @@ function HighScores:initialize()
         {name = "AAA", score = 100},
         {name = "AAA", score = 100}
     })
+    
+    self.font = love.graphics.newFont("resources/nova mono.ttf", 40)
 end
 
 function HighScores:getScores()
@@ -43,11 +45,14 @@ end
 
 function HighScores:draw(l, t)
     local i = 1
+    local oldFont = love.graphics.getFont()
+    love.graphics.setFont(self.font)
     for score in self:getScores() do
         love.graphics.print(i..": "..score.name..": "..score.score, l, t)
         i = i + 1
-        t = t + 20
+        t = t + 40
     end
+    love.graphics.setFont(oldFont)
 end
 
 return HighScores
