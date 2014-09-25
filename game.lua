@@ -1,5 +1,6 @@
 local Class = require "lib.middleclass"
 local Stateful = require "lib.stateful"
+local ResourceManager = require "resourceManager"
 
 local HighScores = require "highScores"
 
@@ -22,7 +23,8 @@ end
 
 function Game:initialize()
     self.useMouse = false
-    self.scores = HighScores:new()
+    self.resourceManager = ResourceManager:new()
+    self.scores = HighScores:new(self.resourceManager)
 end
 
 function Game:draw()

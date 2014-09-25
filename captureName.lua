@@ -9,8 +9,7 @@ local currentInstance = nil
 function captureName:enteredState(finalScore)
     self.finalScore = finalScore
     
-    
-    self.textCapture = TextCapture:new()
+    self.textCapture = TextCapture:new(100, 100, 200, 50, 3, self.resourceManager:getResource("NovaMono40"))
     currentInstance = self
     
     love.graphics.setColor(255, 255, 255, 255)

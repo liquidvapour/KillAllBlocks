@@ -4,7 +4,7 @@ local Class = require "lib.middleclass"
 
 local HighScores = Class("HighScores")
 
-function HighScores:initialize()
+function HighScores:initialize(resourceManager)
     self.highScores = List:new({
         {name = "AAA", score = 100},
         {name = "AAA", score = 100},
@@ -18,7 +18,7 @@ function HighScores:initialize()
         {name = "AAA", score = 100}
     })
     
-    self.font = love.graphics.newFont("resources/nova mono.ttf", 40)
+    self.font = resourceManager:getResource("NovaMono40")
 end
 
 function HighScores:getScores()
