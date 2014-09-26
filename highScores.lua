@@ -48,7 +48,7 @@ function HighScores:draw(l, t)
     local oldFont = love.graphics.getFont()
     love.graphics.setFont(self.font)
     for score in self:getScores() do
-        love.graphics.print(i..": "..score.name..": "..score.score, l, t)
+        love.graphics.print(("%2i: %s: %6i"):format(i, score.name, score.score), l, t)
         i = i + 1
         t = t + 40
     end
