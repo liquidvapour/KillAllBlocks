@@ -10,11 +10,11 @@ end
 
 function gameover:draw()
     if not self.finalScore then
-        self:printInCenter("Game Over!\n final score: "..self.finalScore.."\nPress [ESC] to restart")
+        self:printInCenter("Game Over!\n final score: "..self.finalScore.."\nPress [ESC] to restart", nil, 40)
     else
-        self:printInCenter("Game Over!\n Press [ESC] to restart")
+        self:printInCenter("Game Over!\n Press [ESC] to restart", nil, 40)
     end
-    self.scores:draw(300, 75)
+    self.scores:draw()
 end
 
 function gameover:escPressed()

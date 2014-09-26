@@ -20,8 +20,8 @@ function captureName:exitedState(oldState)
 end
 
 function captureName:draw()
-    self:printInCenter("High Score!\n "..self.finalScore.."\nPress [ESC] to restart")
-    self.scores:draw(300, 75)
+    self:printInCenter("High Score!\n "..self.finalScore.."\nPress [ESC] to restart", nil, 40)
+    self.scores:draw()
     self.textCapture:draw()
 end
 

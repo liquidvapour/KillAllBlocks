@@ -6,16 +6,16 @@ local HighScores = require "highScores"
 
 local Game = Class("Game"):include(Stateful)
 
-function Game:printInCenter(message)
+function Game:printInCenter(message, x, y)
     local windowWidth = sceneWidth
     local windowHeight = sceneHeight
     
-    local windowCenter = windowWidth / 2
-    
+    local windowCenterL = x or windowWidth / 2
+    local windowCenterT = y or windowHeight / 2
     local textw = 250
     
-    local textl = windowCenter - (textw / 2)
-    local textt = windowHeight / 2
+    local textl = windowCenterL - (textw / 2)
+    local textt = windowCenterT
     
     love.graphics.printf(message, textl, textt, textw, "center")
 

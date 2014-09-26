@@ -43,7 +43,8 @@ function HighScores:add(name, score)
     self.highScores:removeTail()
 end
 
-function HighScores:draw(l, t)
+function HighScores:draw()
+    local l, t = 225, 75
     local i = 1
     local oldFont = love.graphics.getFont()
     love.graphics.setFont(self.font)
