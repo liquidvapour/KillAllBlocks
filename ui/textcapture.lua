@@ -24,8 +24,6 @@ function TextCapture:draw()
             love.graphics.setColor(200, 100, 200)
         end
         
-        
-        
         love.graphics.rectangle('line', self.l, self.t, self.w, self.h)
         love.graphics.print(self.text, self.l, self.t)
         love.graphics.setColor(r, g, b, a)

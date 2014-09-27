@@ -8,8 +8,18 @@ require "menu"
 require "gameover"
 require "captureName"
 
+-------------------------------------------------------------------------------
+-- Globals
+-------------------------------------------------------------------------------
+sceneWidth, sceneHeight = 800, 600
+
+-------------------------------------------------------------------------------
+-- Locals
+-------------------------------------------------------------------------------
 local canvas
 local mesh
+local shader = nil 
+local myGame
 
 local function getScreenMesh(canvas)
     local vertices = {
@@ -37,9 +47,6 @@ local function getScreenMesh(canvas)
         
     return love.graphics.newMesh(vertices, canvas, "fan")
 end
-
-sceneWidth, sceneHeight = 800, 600
-shader = nil 
 
 function love.load()
     --local outputWidth, outputHeight = 800, 600
