@@ -38,9 +38,7 @@ function TextCapture:update(dt)
 end
 
 function TextCapture:textinput(text)
-    
-    
-    if not self.done and text:find('%a') then
+    if not self.done and text:find('%w') then
         self.text = self.text..text
     end
     print('text length: '..self.text:len())

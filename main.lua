@@ -42,6 +42,7 @@ sceneWidth, sceneHeight = 800, 600
 shader = nil 
 
 function love.load()
+    --local outputWidth, outputHeight = 800, 600
     local outputWidth, outputHeight = 1024, 768
     --local outputWidth, outputHeight = 1920, 1080
     --local result = love.window.setMode(1024, 768, {fullscreen = false})

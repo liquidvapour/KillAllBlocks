@@ -34,7 +34,9 @@ function captureName:escPressed()
 end
 
 function captureName:returnPressed()
-    currentInstance:addScore()
+    if self.textCapture.done then
+        self:addScore()
+    end
 end
 
 function captureName:addScore()
