@@ -22,7 +22,7 @@ function Ball:initialize(world, timer, context)
     self.a = 0
     self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
     self.world:add(self, self.l, self.t, self.w, self.h)
-    
+        
     self.image = love.graphics.newImage("resources/simpleGraphics_tiles32x32_0.png")
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
@@ -58,6 +58,12 @@ function Ball:draw()
     self:drawBox(self.r, self.g, self.b, self.a)
 end
 
+local function reflect(l, n)
+    print("reflect l: "..l.x..", "..l.y)
+    print("reflect n: "..n.x..", "..n.y)
+    return 2 * (l * n) * n - l
+end
+
 function Ball:updateInFlight(context, dt)
   local dx = self.velocity.x * dt
   local dy = self.velocity.y * dt
@@ -74,26 +80,56 @@ function Ball:updateInFlight(context, dt)
         
         local hitPaddle = col.other == context.paddle
         
-        tl,tt,_,_,bl,bt = col:getBounce()
-        self:moveTo(tl, tt)
+        local tl, tt, nx, ny, bl, bt = col:getBounce()
         
+        --self:moveTo(tl, tt)
+
+        local dir
+        if hitPaddle then
+            local start = vector(self.l, self.t)
+            print("start: "..start.x..", "..start.y)
+            local colPos = vector(tl, tt)
+            print("colPos: "..colPos.x..", "..colPos.y)
+            local l = start - colPos 
+            print("l unnormalized: "..l.x..", "..l.y)
+            l = l:normalized()
+
+            local ballCenterX = tl + (self.w / 2)
+            local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
+            local collisionCenter = paddleCenterX - ballCenterX
+            local xdif = 0.4
+            local offset = -((collisionCenter / (context.paddle.w / 2)) * xdif)
+            local offset = math.clamp(-xdif, offset, xdif)
+            local dirtmp = vector(offset, -1.0):normalized()
+            
+            local r = reflect(l, dirtmp)
+            
+            local newLocation = start + r
+            print("r: "..r.x..", "..r.y)
+            print("newLocation: "..newLocation.x..", "..newLocation.y)
+            bl, bt = newLocation:unpack()
+            dir = r
+        else
+            local a = vector(tl, tt)
+            local b = vector(bl, bt)
+            local dirtmp = b - a
+            dir = dirtmp:normalized()        
+        end
+
         cols, len = self.world:check(self, bl, bt)
-        if len == 0 then
+        if len == 0 or (cols[0] and cols[0].other == context.paddle) then
             self:moveTo(bl, bt)
         end
+
         
-        a = vector(tl, tt)
-        b = vector(bl, bt)
-        dir = b - a
-        dir = dir:normalized()
-        
+
         if hitPaddle then
-            local playerCenterX = tl + (self.w / 2)
-            local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
-            local collisionCenter = paddleCenterX - playerCenterX
-            local offset = -(collisionCenter / (context.paddle.w / 2))
-            offset = math.clamp(-1, offset, 1)
-            dir = vector(offset, -1.0):normalized()
+--            local playerCenterX = tl + (self.w / 2)
+--            local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
+--            local collisionCenter = paddleCenterX - playerCenterX
+--            local offset = -(collisionCenter / (context.paddle.w / 2))
+--            offset = math.clamp(-1, offset, 1)
+--            dir = vector(offset, -1.0):normalized()
             context:hitPaddle()
         end
         
@@ -120,11 +156,11 @@ end
 
 function Ball:updateOnPaddle(context, dt)
     local pl, pt = context.paddle.l, context.paddle.t
-    self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 1))
+    self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 10))
     
     if context.ready and love.keyboard.isDown(" ") then        
         self:setCurrentState("updateInFlight")
-        local dir = vector(math.random() * 0.2, 1):normalized()
+        local dir = vector(math.random() * 0.2, -1):normalized()
         self.velocity = dir * self.speed
     end
 end
