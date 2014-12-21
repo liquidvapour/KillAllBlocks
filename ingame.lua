@@ -179,6 +179,8 @@ function ingame:enteredState()
     self.timer = timer:new()
 
     self.soundBox = soundBox:new()
+    self.soundBox:startBackingTrack()
+    
     
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
@@ -204,6 +206,11 @@ function ingame:enteredState()
     self.thingsToUpdate:add(self.scoreBox)
     self.thingsToUpdate:add(self.comboBox)
 end
+
+function ingame:exitedState(oldState)
+    self.soundBox:stopBackingTrack()
+end
+
 
 function ingame:updateAllTheThings(dt)
     for t in self.thingsToUpdate:iterate() do

@@ -8,6 +8,8 @@ function SoundBox:initialize()
     self.saw01 = love.audio.newSource("resources/sound/saw01.wav", "static")    
     self.explosion = love.audio.newSource("resources/sound/explosion01.wav", "static")    
     self.wobly = love.audio.newSource("resources/sound/wobly.wav", "static")    
+    
+    self.backingTrack = love.audio.newSource("resources/sound/backingTracks/spacedeb.mod")
 end
 
 local function playSource(source)
@@ -16,6 +18,14 @@ local function playSource(source)
     else
         source:play()
     end
+end
+
+function SoundBox:startBackingTrack()
+    self.backingTrack:play()
+end
+
+function SoundBox:stopBackingTrack()
+    self.backingTrack:stop()
 end
 
 function SoundBox:hitSide()
