@@ -1,7 +1,10 @@
-local Game = require "game"
 local uimenu = require "uimenu"
 local Background = require "background"
+
+local Game = require "game"
 local menuState = Game:addState("menu")
+
+local SoundBox = require "soundbox"
 
 function menuState:draw()
     love.graphics.setColor(255, 255, 255, 255)
@@ -33,12 +36,17 @@ function menuState:enteredState()
     self.backg = Background:new(self.backgroundImage, 0, 0, 50, -1, -1)    
     self.backg2 = Background:new(self.backgroundImage, 0, 65, 20, 1, 0)
     love.graphics.setBackgroundColor(0, 0, 0)
+    self.soundBox = SoundBox:new()
+    self.soundBox:startIntroBackingTrack()
 end
 
 function menuState:exitedState()
 	self.menu = nil
 	self.backgroundImage = nil
 	self.backgroundQuad = nil
+    
+    self.soundBox:stopIntroBackingTrack()
+    self.soundBox = nil
 end
 
 function menuState:update(dt)
