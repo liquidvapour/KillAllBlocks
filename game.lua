@@ -6,6 +6,7 @@ local HighScores = require "highScores"
 
 local Game = Class("Game"):include(Stateful)
 
+
 function Game:printInCenter(message, x, y)
     local windowWidth = sceneWidth
     local windowHeight = sceneHeight
@@ -21,10 +22,17 @@ function Game:printInCenter(message, x, y)
 
 end
 
-function Game:initialize()
+function Game:initialize(soundbox)
     self.useMouse = false
     self.resourceManager = ResourceManager:new()
     self.scores = HighScores:new(self.resourceManager)
+    
+    self.soundbox = soundbox
+    if soundbox then
+        print("Game initialized with soundbox")
+    else
+        print("Game initialized with out soundbox")
+    end
 end
 
 function Game:draw()

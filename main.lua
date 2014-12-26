@@ -8,6 +8,7 @@ require "menu"
 require "gameover"
 require "captureName"
 
+local SoundBox = require "soundbox"
 -------------------------------------------------------------------------------
 -- Globals
 -------------------------------------------------------------------------------
@@ -53,13 +54,15 @@ function love.load()
     local outputWidth, outputHeight = 1024, 768
     --local outputWidth, outputHeight = 1920, 1080
     --local result = love.window.setMode(1024, 768, {fullscreen = false})
-    local fullscreen = true
+    local fullscreen = false
     local result = love.window.setMode(outputWidth, outputHeight, {fullscreen = fullscreen})
     --local result = love.window.setMode(outputWidth, outputHeight, {fullscreen = true})
     print(string.format("setMode result: %s", result))
     print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
 
-    myGame = game:new()
+    local soundbox = SoundBox:new()
+    
+    myGame = game:new(soundbox)
     myGame:gotoState("menu")
     
     canvas = love.graphics.newCanvas(sceneWidth, sceneHeight)

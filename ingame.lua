@@ -9,7 +9,6 @@ local bump_debug = require "bump_debug"
 local vector = require "hump.vector"
 local timer = require "hump.timer"
 local scorer = require "scorer"
-local soundBox = require "soundbox"
 
 local NumberBox = require "ui.numberbox"
 local utils = require "utils"
@@ -44,37 +43,39 @@ function ingame:hitBlock(block)
     self.blockCount = self.blockCount - 1
     self:hitTarget()
     if self.blockCount == 0 then
-        self.soundBox:gameover()
+        self.soundbox:gameover()
         self:gotoState("gameover", self.myScorer:getScore())
     end
 end
 
 function ingame:hitPaddle()
+
+
     print("hitPaddle")
     self.myScorer:hitPaddle()
     self:updateUiScores()
-    self.soundBox:hitPaddle()
+    self.soundbox:hitPaddle()
 end
 
 function ingame:hitGoal()
     print("hitGoal")
     self.myScorer:hitGoal()
     self:updateUiScores()
-    self.soundBox:hitGoal()
+    self.soundbox:hitGoal()
 end
 
 function ingame:hitTarget()
     print("hitTarget")
     self.myScorer:hitTarget()
     self:updateUiScores()
-    self.soundBox:hitTarget()
+    self.soundbox:hitTarget()
 end
 
 function ingame:hitSide()
     print("hitSide")
     self.myScorer:hitSide()
     self:updateUiScores()
-    self.soundBox:hitSide()
+    self.soundbox:hitSide()
 end
 
 function ingame:getScore()
@@ -178,9 +179,7 @@ function ingame:enteredState()
     
     self.timer = timer:new()
 
-    self.soundBox = soundBox:new()
-    self.soundBox:startBackingTrack()
-    
+    self.soundbox:startBackingTrack()
     
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
@@ -208,7 +207,7 @@ function ingame:enteredState()
 end
 
 function ingame:exitedState(oldState)
-    self.soundBox:stopBackingTrack()
+    self.soundbox:stopBackingTrack()
 end
 
 

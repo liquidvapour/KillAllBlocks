@@ -1,4 +1,3 @@
-local SoundBox = require "soundbox"
 
 local Game = require "game"
 local gameover = Game:addState("gameover")
@@ -9,15 +8,13 @@ function gameover:enteredState(finalScore)
         self:gotoState("captureName", finalScore)
     end
 
-    self.soundBox = SoundBox:new()
-    self.soundBox:startIntroBackingTrack()
+    self.soundbox:startIntroBackingTrack()
 end
 
 function gameover:exitedState()
-    if self.soundBox then
-        self.soundBox:stopIntroBackingTrack()
+    if self.soundbox then
+        self.soundbox:stopIntroBackingTrack()
     end
-    --self.soundBox = nil
 end
 
 function gameover:draw()
