@@ -25,14 +25,21 @@ local myGame
 
 local innerRun = love.run
 
+local profileingActive = false
+
 function love.run()
-    ProFi:start()
-    
-    print("start run")
-    innerRun()
-    print("end run")
-    ProFi:stop()
-    ProFi:writeReport("_profile.txt")
+    if profileingActive then
+        ProFi:start()
+        print("start run")
+        innerRun()
+        print("end run")
+        ProFi:stop()
+        ProFi:writeReport("_profile.txt")
+    else
+        print("start run")
+        innerRun()
+        print("end run")
+    end
 end
 
 local function getScreenMesh(canvas)
