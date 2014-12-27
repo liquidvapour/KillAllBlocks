@@ -136,6 +136,8 @@ function Ball:updateInFlight(context, dt)
             print("newLocation: "..newLocation.x..", "..newLocation.y)
             bl, bt = newLocation:unpack()
             dir = r
+            
+            context:hitPaddle()
         else
             local a = vector(tl, tt)
             local b = vector(bl, bt)
@@ -146,11 +148,6 @@ function Ball:updateInFlight(context, dt)
         cols, len = self.world:check(self, bl, bt)
         if len == 0 or (cols[0] and cols[0].other == context.paddle) then
             self:moveTo(bl, bt)
-        end
-
-
-        if hitPaddle then
-            context:hitPaddle()
         end
         
         self.velocity = dir * self.velocity:len()
