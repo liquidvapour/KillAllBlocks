@@ -107,11 +107,11 @@ end
 
 -- Message/debug functions
 function ingame:drawMessage()
-  local msg = instructions:format(tostring(shouldDrawDebug))
   love.graphics.setColor(0, 0, 0, 170)
   love.graphics.rectangle("fill", 95, 0, 310, 32)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print(msg, 550, 10)
+  --local msg = instructions:format(tostring(shouldDrawDebug))
+  --love.graphics.print(msg, 550, 10)
   
   love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
   love.graphics.print(("update time: %.3fms"):format(self.updateTime * 1000), 630, 510)

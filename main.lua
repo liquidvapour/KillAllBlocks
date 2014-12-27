@@ -9,6 +9,7 @@ require "gameover"
 require "captureName"
 
 local SoundBox = require "soundbox"
+local ProFi = require "lib/ProFi"
 -------------------------------------------------------------------------------
 -- Globals
 -------------------------------------------------------------------------------
@@ -21,6 +22,18 @@ local canvas
 local mesh
 local shader = nil 
 local myGame
+
+local innerRun = love.run
+
+function love.run()
+    ProFi:start()
+    
+    print("start run")
+    innerRun()
+    print("end run")
+    ProFi:stop()
+    ProFi:writeReport("_profile.txt")
+end
 
 local function getScreenMesh(canvas)
     local vertices = {
