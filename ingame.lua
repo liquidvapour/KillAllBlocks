@@ -37,6 +37,18 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
+function getParticleSystem()
+    local image = love.graphics.newImage("resources/particle.png")
+    local particleSystem = love.graphics.newParticleSystem(image, 100)
+    particleSystem:setEmissionRate(20)
+    particleSystem:setEmitterLifetime(-1)
+    particleSystem:setParticleLifetime(0.75, 1)
+    particleSystem:setSizes(1)
+    --particleSystem:start()
+
+    return particleSystem
+end
+
 function ingame:hitBlock(block)
     removeItemFrom(self.blocks, block)
     self.world:remove(block)
@@ -48,13 +60,16 @@ function ingame:hitBlock(block)
     end
 end
 
-function ingame:hitPaddle()
+
+function ingame:hitPaddle(x, y)
 
 
-    print("hitPaddle")
+    print(("hitPaddle (%0.3f, %0.3f)."):format(x, y))
     self.myScorer:hitPaddle()
     self:updateUiScores()
     self.soundbox:hitPaddle()
+    self.particleSystem:setPosition(x, y)
+    self.particleSystem:emit(1)
 end
 
 function ingame:hitGoal()
@@ -198,16 +213,20 @@ function ingame:enteredState()
     self.drawTime = 0
     self.updateTime = 0
     
+    self.particleSystem = getParticleSystem()
+    
     self.thingsToUpdate = utils.newList()
     self.thingsToUpdate:add(self.timer)
     self.thingsToUpdate:add(self.paddle)
     self.thingsToUpdate:add(self.ball)
     self.thingsToUpdate:add(self.scoreBox)
     self.thingsToUpdate:add(self.comboBox)
+    self.thingsToUpdate:add(self.particleSystem)
 end
 
 function ingame:exitedState(oldState)
     self.soundbox:stopBackingTrack()
+    self.particleSystem = nil
 end
 
 
@@ -238,6 +257,7 @@ function ingame:draw()
     
     self.scoreBox:draw()
     self.comboBox:draw()
+    love.graphics.draw(self.particleSystem, 0, 0)
 end
 
 function ingame:escPressed()

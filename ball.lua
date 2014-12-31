@@ -137,7 +137,7 @@ function Ball:updateInFlight(context, dt)
             bl, bt = newLocation:unpack()
             dir = r
             
-            context:hitPaddle()
+            context:hitPaddle(bl, bt)
         else
             local a = vector(tl, tt)
             local b = vector(bl, bt)
