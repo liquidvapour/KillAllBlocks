@@ -12,6 +12,7 @@ local scorer = require "scorer"
 
 local NumberBox = require "ui.numberbox"
 local utils = require "utils"
+local GraphicsUtils = require "lib.utils"
 
 local ingame = Game:addState("ingame")
 
@@ -38,13 +39,17 @@ end
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
 function getParticleSystem()
-    local image = love.graphics.newImage("resources/particle.png")
+    local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 32, 96, 32, 32)
     local particleSystem = love.graphics.newParticleSystem(image, 100)
-    particleSystem:setEmissionRate(20)
-    particleSystem:setEmitterLifetime(-1)
-    particleSystem:setParticleLifetime(0.75, 1)
+    particleSystem:setEmissionRate(40)
+    particleSystem:setEmitterLifetime(0.20)
+    particleSystem:setParticleLifetime(2, 2)
     particleSystem:setSizes(1)
     --particleSystem:start()
+    particleSystem:setDirection(1.25 * (math.pi))
+    particleSystem:setLinearAcceleration(0, 200, 0, 250)
+    particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 255)
+    particleSystem:setSpeed(100, 200)
 
     return particleSystem
 end
@@ -62,14 +67,12 @@ end
 
 
 function ingame:hitPaddle(x, y)
-
-
     print(("hitPaddle (%0.3f, %0.3f)."):format(x, y))
     self.myScorer:hitPaddle()
     self:updateUiScores()
     self.soundbox:hitPaddle()
-    self.particleSystem:setPosition(x, y)
-    self.particleSystem:emit(1)
+    self.particleSystem:setPosition(x+16, y+32)
+    self.particleSystem:start()
 end
 
 function ingame:hitGoal()
@@ -126,6 +129,7 @@ function ingame:drawMessage()
   love.graphics.rectangle("fill", 95, 0, 310, 32)
   love.graphics.setColor(255, 255, 255)
   --local msg = instructions:format(tostring(shouldDrawDebug))
+  -- RP 2014-12-31: this is s..l..o..w! so I commented it out.
   --love.graphics.print(msg, 550, 10)
   
   love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
