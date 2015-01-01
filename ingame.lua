@@ -41,14 +41,17 @@ function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 function getParticleSystem()
     local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 32, 96, 32, 32)
     local particleSystem = love.graphics.newParticleSystem(image, 100)
-    particleSystem:setEmissionRate(60)
+    particleSystem:setEmissionRate(30)
     particleSystem:setEmitterLifetime(0.15)
     particleSystem:setParticleLifetime(2, 2)
     particleSystem:setSizes(1)
     particleSystem:setDirection(1.25 * (math.pi))
-    particleSystem:setLinearAcceleration(0, 200, 0, 250)
+    particleSystem:setLinearAcceleration(0, 800, 0, 800)
     particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 255)
-    particleSystem:setSpeed(100, 200)
+    particleSystem:setSpeed(200, 300)
+    local twoPi = 2 * math.pi
+    particleSystem:setRotation(0, twoPi)
+    particleSystem:setSpin(math.pi, twoPi)
 
     return particleSystem
 end
