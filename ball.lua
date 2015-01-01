@@ -118,7 +118,8 @@ function Ball:updateInFlight(context, dt)
             local offset = -((collisionCenter / (context.paddle.w / 2)) * xdif)
             local offset = math.clamp(-xdif, offset, xdif)
             print(("offset: %0.3f"):format(offset))
-            local newDirX, newDirY = rotate(0, -1, degToRad(offset))
+            local bounceAngleInRadians = degToRad(offset)
+            local newDirX, newDirY = rotate(0, -1, bounceAngleInRadians)
             print("newDirX: "..newDirX..", newDirY: "..newDirY)
 
             local r = vector(newDirX, newDirY)
@@ -137,7 +138,7 @@ function Ball:updateInFlight(context, dt)
             bl, bt = newLocation:unpack()
             dir = r
             
-            context:hitPaddle(bl, bt)
+            context:hitPaddle(bl, bt, bounceAngleInRadians)
         else
             local a = vector(tl, tt)
             local b = vector(bl, bt)

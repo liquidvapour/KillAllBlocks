@@ -41,11 +41,10 @@ function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 function getParticleSystem()
     local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 32, 96, 32, 32)
     local particleSystem = love.graphics.newParticleSystem(image, 100)
-    particleSystem:setEmissionRate(40)
-    particleSystem:setEmitterLifetime(0.20)
+    particleSystem:setEmissionRate(60)
+    particleSystem:setEmitterLifetime(0.15)
     particleSystem:setParticleLifetime(2, 2)
     particleSystem:setSizes(1)
-    --particleSystem:start()
     particleSystem:setDirection(1.25 * (math.pi))
     particleSystem:setLinearAcceleration(0, 200, 0, 250)
     particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 255)
@@ -65,13 +64,15 @@ function ingame:hitBlock(block)
     end
 end
 
+local particleSystemDirectionOffset = (1.5 * (math.pi))
 
-function ingame:hitPaddle(x, y)
+function ingame:hitPaddle(x, y, bounceAngleInRadians)
     print(("hitPaddle (%0.3f, %0.3f)."):format(x, y))
     self.myScorer:hitPaddle()
     self:updateUiScores()
     self.soundbox:hitPaddle()
-    self.particleSystem:setPosition(x+16, y+32)
+    self.particleSystem:setDirection(bounceAngleInRadians + particleSystemDirectionOffset)
+    self.particleSystem:setPosition(x+16, self.paddle.t - 16)
     self.particleSystem:start()
 end
 
@@ -251,9 +252,10 @@ end
 
 function ingame:draw()
     local startTime = love.timer.getTime()
-    self:drawBlocks()
     self.ball:draw()
     self.paddle:draw()
+    love.graphics.draw(self.particleSystem, 0, 0)
+    self:drawBlocks()
     if shouldDrawDebug then self:drawDebug() end
     self:drawMessage()
     local endTime = love.timer.getTime()
@@ -261,7 +263,6 @@ function ingame:draw()
     
     self.scoreBox:draw()
     self.comboBox:draw()
-    love.graphics.draw(self.particleSystem, 0, 0)
 end
 
 function ingame:escPressed()
