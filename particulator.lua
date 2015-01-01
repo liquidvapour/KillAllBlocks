@@ -23,7 +23,7 @@ end
 
 local function getTargetParticleSystem()
     local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 128, 32, 32)
-    local particleSystem = love.graphics.newParticleSystem(image, 1000)
+    local particleSystem = love.graphics.newParticleSystem(image, 20)
     particleSystem:setEmissionRate(0)
     particleSystem:setEmitterLifetime(-1)
     particleSystem:setParticleLifetime(2, 2)
@@ -40,14 +40,33 @@ local function getTargetParticleSystem()
     return particleSystem
 end
 
+local function getGlowParticleSystem()
+    local image = love.graphics.newImage("resources/particle.png")
+    local particleSystem = love.graphics.newParticleSystem(image, 10000)
+    particleSystem:setEmissionRate(1000)
+    particleSystem:setEmitterLifetime(0.2)
+    particleSystem:setParticleLifetime(0.25, 0.25)
+    particleSystem:setSizes(0.1, 0.5)
+    particleSystem:setDirection(1.5 * (math.pi))
+    particleSystem:setLinearAcceleration(0, 0, 0, -10)
+    particleSystem:setColors(246, 232, 8, 255, 246, 97, 8, 0)
+    particleSystem:setSpeed(0, 100)
+    particleSystem:setAreaSpread("uniform", 64, 16)
+
+    return particleSystem
+end
+
 function Particulator:initialize()
     self.paddleParticles = getPaddleParticleSystem()
     self.targetParticles = getTargetParticleSystem()
+    self.glowParticles = getGlowParticleSystem()
 end
 
 function Particulator:hitBlock(block)
     self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
     self.targetParticles:emit(4)
+    self.glowParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
+    self.glowParticles:start()
 end
 
 local particleSystemDirectionOffset = 1.5 * (math.pi)
@@ -61,11 +80,13 @@ end
 function Particulator:update(dt)
     self.paddleParticles:update(dt)
     self.targetParticles:update(dt)
+    self.glowParticles:update(dt)    
 end
 
 function Particulator:draw()
     love.graphics.draw(self.paddleParticles, 0, 0)
     love.graphics.draw(self.targetParticles, 0, 0)
+    love.graphics.draw(self.glowParticles, 0, 0)
 end
 
 return Particulator
