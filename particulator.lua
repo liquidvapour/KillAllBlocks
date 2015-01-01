@@ -1,5 +1,6 @@
 local Class = require "lib.middleclass"
 local GraphicsUtils = require "lib.utils"
+local timer = require "hump.timer"
 
 local Particulator = Class("Particulator")
 
@@ -40,14 +41,14 @@ local function getTargetParticleSystem()
     return particleSystem
 end
 
-local function getGlowParticleSystem()
+local function getGlowParticleSystem(blockBurnTime)
     local image = love.graphics.newImage("resources/particle.png")
     local particleSystem = love.graphics.newParticleSystem(image, 10000)
-    particleSystem:setEmissionRate(1000)
-    particleSystem:setEmitterLifetime(0.2)
+    particleSystem:setEmissionRate(350)
+    particleSystem:setEmitterLifetime(blockBurnTime + 0.1)
     particleSystem:setParticleLifetime(0.25, 0.25)
-    particleSystem:setSizes(0.1, 0.5)
-    particleSystem:setDirection(1.5 * (math.pi))
+    particleSystem:setSizes(0.2, 1)
+    particleSystem:setDirection(1.5 * math.pi)
     particleSystem:setLinearAcceleration(0, 0, 0, -10)
     particleSystem:setColors(246, 232, 8, 255, 246, 97, 8, 0)
     particleSystem:setSpeed(0, 100)
@@ -56,15 +57,20 @@ local function getGlowParticleSystem()
     return particleSystem
 end
 
-function Particulator:initialize()
+function Particulator:initialize(timer, blockBurnTime)
     self.paddleParticles = getPaddleParticleSystem()
     self.targetParticles = getTargetParticleSystem()
-    self.glowParticles = getGlowParticleSystem()
+    self.glowParticles = getGlowParticleSystem(blockBurnTime)
+    self.timer = timer
+    self.blockBurnTime = blockBurnTime
 end
 
+
 function Particulator:hitBlock(block)
-    self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
-    self.targetParticles:emit(4)
+    self.timer:add(self.blockBurnTime, function() 
+        self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t) 
+        self.targetParticles:emit(4)
+    end)
     self.glowParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
     self.glowParticles:start()
 end

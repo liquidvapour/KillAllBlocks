@@ -27,6 +27,7 @@ local instructions = [[
     delete: run garbage collector
 ]]
 
+local blockBurnTime = 0.5
 
 local playerStates = {}
 
@@ -41,12 +42,12 @@ end
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
 function ingame:hitBlock(block)
-    removeItemFrom(self.blocks, block)
     self.world:remove(block)
     self.blockCount = self.blockCount - 1
     self:hitTarget()
   
     self.particulator:hitBlock(block)
+    self.timer:add(blockBurnTime, function() removeItemFrom(self.blocks, block) end)
     
     if self.blockCount == 0 then
         self.soundbox:gameover()
@@ -204,7 +205,7 @@ function ingame:enteredState()
     self.drawTime = 0
     self.updateTime = 0
     
-    self.particulator = Particulator:new()
+    self.particulator = Particulator:new(self.timer, blockBurnTime)
     
     self.thingsToUpdate = utils.newList()
     self.thingsToUpdate:add(self.timer)
