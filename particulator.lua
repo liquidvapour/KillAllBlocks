@@ -16,7 +16,7 @@ local function getPaddleParticleSystem()
     particleSystem:setSpeed(200, 300)
     local twoPi = 2 * math.pi
     particleSystem:setRotation(0, twoPi)
-    particleSystem:setSpin(-twoPi, twoPi)
+    particleSystem:setSpin(-twoPi, 0)
 
     return particleSystem
 end
@@ -24,9 +24,7 @@ end
 local function getTargetParticleSystem()
     local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 128, 32, 32)
     local particleSystem = love.graphics.newParticleSystem(image, 1000)
-    --particleSystem:setEmissionRate(30)
     particleSystem:setEmissionRate(0)
-    --particleSystem:setEmitterLifetime(0.15)
     particleSystem:setEmitterLifetime(-1)
     particleSystem:setParticleLifetime(2, 2)
     particleSystem:setSizes(1, 1.2)
@@ -49,11 +47,10 @@ end
 
 function Particulator:hitBlock(block)
     self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
-    --self.targetParticleSystem:start()
     self.targetParticles:emit(4)
 end
 
-local particleSystemDirectionOffset = (1.5 * (math.pi))
+local particleSystemDirectionOffset = 1.5 * (math.pi)
 
 function Particulator:hitPaddle(paddle, x, bounceAngleInRadians)
     self.paddleParticles:setDirection(bounceAngleInRadians + particleSystemDirectionOffset)
@@ -72,4 +69,3 @@ function Particulator:draw()
 end
 
 return Particulator
-
