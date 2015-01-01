@@ -14,6 +14,8 @@ local NumberBox = require "ui.numberbox"
 local utils = require "utils"
 local GraphicsUtils = require "lib.utils"
 
+local Particulator = require "particulator"
+
 local ingame = Game:addState("ingame")
 
 local instructions = [[
@@ -38,55 +40,13 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
-function getPaddleParticleSystem()
-    local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 32, 96, 32, 32)
-    local particleSystem = love.graphics.newParticleSystem(image, 100)
-    particleSystem:setEmissionRate(30)
-    particleSystem:setEmitterLifetime(0.15)
-    particleSystem:setParticleLifetime(2, 2)
-    particleSystem:setSizes(1)
-    particleSystem:setDirection(1.25 * (math.pi))
-    particleSystem:setLinearAcceleration(0, 800, 0, 800)
-    particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 255)
-    particleSystem:setSpeed(200, 300)
-    local twoPi = 2 * math.pi
-    particleSystem:setRotation(0, twoPi)
-    particleSystem:setSpin(-twoPi, twoPi)
-
-    return particleSystem
-end
-
-function getTargetParticleSystem()
-    local image = GraphicsUtils.getDrawableFromTileMap("resources/simpleGraphics_tiles32x32_0.png", 64, 128, 32, 32)
-    local particleSystem = love.graphics.newParticleSystem(image, 1000)
-    --particleSystem:setEmissionRate(30)
-    particleSystem:setEmissionRate(0)
-    --particleSystem:setEmitterLifetime(0.15)
-    particleSystem:setEmitterLifetime(-1)
-    particleSystem:setParticleLifetime(2, 2)
-    particleSystem:setSizes(1, 1.2)
-    particleSystem:setDirection(1.5 * (math.pi))
-    particleSystem:setLinearAcceleration(0, 800, 0, 800)
-    particleSystem:setColors(255, 255, 255, 255, 255, 255, 255, 255)
-    particleSystem:setSpeed(0, 100)
-    particleSystem:setAreaSpread("uniform", 58, 0)
-    local twoPi = 2 * math.pi
-    particleSystem:setRotation(0, twoPi)
-    particleSystem:setSpin(twoPi, 0)
-
-    return particleSystem
-end
-
 function ingame:hitBlock(block)
     removeItemFrom(self.blocks, block)
     self.world:remove(block)
     self.blockCount = self.blockCount - 1
     self:hitTarget()
-    
-    self.targetParticleSystem:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
-    --self.targetParticleSystem:start()
-    self.targetParticleSystem:emit(4)
-
+  
+    self.particulator:hitBlock(block)
     
     if self.blockCount == 0 then
         self.soundbox:gameover()
@@ -94,16 +54,13 @@ function ingame:hitBlock(block)
     end
 end
 
-local particleSystemDirectionOffset = (1.5 * (math.pi))
-
 function ingame:hitPaddle(x, y, bounceAngleInRadians)
     print(("hitPaddle (%0.3f, %0.3f)."):format(x, y))
     self.myScorer:hitPaddle()
     self:updateUiScores()
     self.soundbox:hitPaddle()
-    self.paddleParticleSystem:setDirection(bounceAngleInRadians + particleSystemDirectionOffset)
-    self.paddleParticleSystem:setPosition(x+16, self.paddle.t - 16)
-    self.paddleParticleSystem:start()
+    
+    self.particulator:hitPaddle(self.paddle, x, bounceAngleInRadians)
 end
 
 function ingame:hitGoal()
@@ -183,7 +140,6 @@ function ingame:setupTargets()
     local numColumns = 4
     local count = 0
     
-    
     local totalWidth = numColumns * targetWidth
     local screenWidth = 800--love.window.getWidth()
     
@@ -248,8 +204,7 @@ function ingame:enteredState()
     self.drawTime = 0
     self.updateTime = 0
     
-    self.paddleParticleSystem = getPaddleParticleSystem()
-    self.targetParticleSystem = getTargetParticleSystem()
+    self.particulator = Particulator:new()
     
     self.thingsToUpdate = utils.newList()
     self.thingsToUpdate:add(self.timer)
@@ -257,8 +212,7 @@ function ingame:enteredState()
     self.thingsToUpdate:add(self.ball)
     self.thingsToUpdate:add(self.scoreBox)
     self.thingsToUpdate:add(self.comboBox)
-    self.thingsToUpdate:add(self.paddleParticleSystem)
-    self.thingsToUpdate:add(self.targetParticleSystem)
+    self.thingsToUpdate:add(self.particulator)
 end
 
 function ingame:exitedState(oldState)
@@ -289,8 +243,7 @@ function ingame:draw()
     self.paddle:draw()
     self:drawBlocks()
     
-    love.graphics.draw(self.paddleParticleSystem, 0, 0)
-    love.graphics.draw(self.targetParticleSystem, 0, 0)
+    self.particulator:draw()
     
     if shouldDrawDebug then self:drawDebug() end
     self:drawMessage()
