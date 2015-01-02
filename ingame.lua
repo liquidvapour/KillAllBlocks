@@ -27,7 +27,7 @@ local instructions = [[
     delete: run garbage collector
 ]]
 
-local blockBurnTime = 0.5
+local blockBurnTime = 0.25
 
 local playerStates = {}
 
@@ -53,6 +53,8 @@ function ingame:hitBlock(block)
   
     self.particulator:hitBlock(block)
     self.timer:add(blockBurnTime, function() removeItemFrom(self.blocks, block) end)
+    
+    block:hit()
     
     if self.blockCount == 0 then
         self.timer:add(1, function() self:gotoGameOver() end)
@@ -158,7 +160,7 @@ function ingame:setupTargets()
         for y = 0, numRows - 1 do
             tl = xOffset + (x * (targetWidth))
             tt = 100 + (y * (targetHeight))
-            self:addToBlockList(Target:new(self.world, tl, tt, targetWidth, targetHeight))
+            self:addToBlockList(Target:new(self.world, tl, tt, targetWidth, targetHeight, nil, self.timer))
             count = count + 1
         end
     end 
@@ -186,9 +188,10 @@ function ingame:enteredState()
     self.goal = Side:new(self.world, 0, 600-24, 800, 24)
     self:addToBlockList(self.goal)
 
+    self.timer = timer:new()
+
     self:setupTargets()
     
-    self.timer = timer:new()
 
     self.soundbox:startBackingTrack()
     
