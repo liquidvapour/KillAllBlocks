@@ -41,6 +41,11 @@ end
 
 function math.clamp(low, n, high) return math.min(math.max(n, low), high) end
 
+function ingame:gotoGameOver()
+    self.soundbox:gameover()
+    self:gotoState("gameover", self.myScorer:getScore())
+end
+
 function ingame:hitBlock(block)
     self.world:remove(block)
     self.blockCount = self.blockCount - 1
@@ -50,8 +55,7 @@ function ingame:hitBlock(block)
     self.timer:add(blockBurnTime, function() removeItemFrom(self.blocks, block) end)
     
     if self.blockCount == 0 then
-        self.soundbox:gameover()
-        self:gotoState("gameover", self.myScorer:getScore())
+        self.timer:add(1, function() self:gotoGameOver() end)
     end
 end
 
