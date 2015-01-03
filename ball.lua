@@ -96,7 +96,7 @@ function Ball:updateInFlight(context, dt)
       while len > 0 do
         col = cols[1]
         
-        local hitPaddle = col.other == context.paddle
+        local hitPaddle = col.other == context:getPaddle()
         
         local tl, tt, nx, ny, bl, bt = col:getBounce()
         
@@ -112,10 +112,10 @@ function Ball:updateInFlight(context, dt)
             l = l:normalized()
 
             local ballCenterX = tl + (self.w / 2)
-            local paddleCenterX = context.paddle.l + (context.paddle.w / 2)            
+            local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
             local collisionCenter = paddleCenterX - ballCenterX
             local xdif = 45
-            local offset = -((collisionCenter / (context.paddle.w / 2)) * xdif)
+            local offset = -((collisionCenter / (context:getPaddle().w / 2)) * xdif)
             local offset = math.clamp(-xdif, offset, xdif)
             print(("offset: %0.3f"):format(offset))
             local bounceAngleInRadians = degToRad(offset)
@@ -147,13 +147,13 @@ function Ball:updateInFlight(context, dt)
         end
 
         cols, len = self.world:check(self, bl, bt)
-        if len == 0 or (cols[0] and cols[0].other == context.paddle) then
+        if len == 0 or (cols[0] and cols[0].other == context:getPaddle()) then
             self:moveTo(bl, bt)
         end
         
         self.velocity = dir * self.velocity:len()
        
-        if col.other == context.goal then
+        if col.other == context:getGoal() then
             self:hitGoal()
         elseif not hitPaddle then
             if col.other.tag == "side" then
@@ -173,10 +173,11 @@ function Ball:hitGoal()
 end
 
 function Ball:updateOnPaddle(context, dt)
-    local pl, pt = context.paddle.l, context.paddle.t
-    self:moveTo(pl + (context.paddle.w / 2) - (self.w / 2), pt - (self.h + 10))
+    local paddle = context:getPaddle()
+    local pl, pt = paddle.l, paddle.t
+    self:moveTo(pl + (paddle.w / 2) - (self.w / 2), pt - (self.h + 10))
     
-    if context.ready and love.keyboard.isDown(" ") then        
+    if context:isReady() and love.keyboard.isDown(" ") then        
         self:setCurrentState("updateInFlight")
         local dir = vector(math.random() * 0.2, -1):normalized()
         self.velocity = dir * self.speed

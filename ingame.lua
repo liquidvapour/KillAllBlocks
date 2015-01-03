@@ -15,7 +15,7 @@ local utils = require "utils"
 local GraphicsUtils = require "lib.utils"
 
 local Particulator = require "particulator"
-
+local BallCallbacks = require "ballCallbacks"
 local ingame = Game:addState("ingame")
 
 local instructions = [[
@@ -191,14 +191,21 @@ function ingame:enteredState()
     self.timer = timer:new()
 
     self:setupTargets()
-    
 
     self.soundbox:startBackingTrack()
     
     self.ready = false
     self.timer:add(1, function() self.ready = true end)
 
-    self.ball = Ball:new(self.world, self.timer, self)
+    self.ballCallbacks = BallCallbacks:new(self)
+    
+    self.ballCallbacks:registerAll(
+        function(bl, bt, bounceAngleInRadians) self:hitPaddle(bl, bt, bounceAngleInRadians) end,
+        function() self:hitSide() end, 
+        function(block) self:hitBlock(block) end,
+        function() self:hitGoal() end)
+        
+    self.ball = Ball:new(self.world, self.timer, self.ballCallbacks)
     
     self.myScorer = scorer:new(self)
     
@@ -225,6 +232,8 @@ end
 
 function ingame:exitedState(oldState)
     self.soundbox:stopBackingTrack()
+    self.ballCallbacks:unregisterAll()
+    self.ballCallbacks = nil
     self.paddleParticleSystem = nil
     self.targetParticleSystem = nil
 end
