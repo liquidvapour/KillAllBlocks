@@ -57,9 +57,26 @@ function ingame:hitBlock(block)
     block:hit()
     
     if self.blockCount == 0 then
+        self:startGameOverBanner()
         self.timer:add(1, function() self:gotoGameOver() end)
     end
 end
+
+function ingame:startGameOverBanner()
+    self.gameOverBanner = self:createItem("resources/gameOver.png", 272, 0)
+end
+
+function ingame:createItem(resource, x, pause, onSelected, r, g, b)
+    local image = love.graphics.newImage(resource)
+    local menuItem = {
+        image = image, 
+        l = 800-256, x = x, w = 512, h = 256, 
+        onSelected = onSelected,
+        r = r or 255, g = g or 255, b = b or 255, a = 0}
+    --self.timer:add(pause, createMenuItemTweenFunction(menuItem, 0.50, "linear"))
+    return menuItem
+end
+
 
 function ingame:hitPaddle(x, y, bounceAngleInRadians)
     print(("hitPaddle (%0.3f, %0.3f)."):format(x, y))
@@ -228,6 +245,9 @@ function ingame:enteredState()
     self.thingsToUpdate:add(self.scoreBox)
     self.thingsToUpdate:add(self.comboBox)
     self.thingsToUpdate:add(self.particulator)
+    
+    --self:startGameOverBanner()
+
 end
 
 function ingame:exitedState(oldState)
@@ -236,6 +256,7 @@ function ingame:exitedState(oldState)
     self.ballCallbacks = nil
     self.paddleParticleSystem = nil
     self.targetParticleSystem = nil
+    self.gameOverBanner = nil
 end
 
 
@@ -269,6 +290,10 @@ function ingame:draw()
     
     self.scoreBox:draw()
     self.comboBox:draw()
+    
+    if self.gameOverBanner then
+        love.graphics.draw(self.gameOverBanner.image, (800/2)-256, (600/2)-128)
+    end
 end
 
 function ingame:escPressed()
