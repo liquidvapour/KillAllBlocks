@@ -13,6 +13,7 @@ local scorer = require "scorer"
 local NumberBox = require "ui.numberbox"
 local utils = require "utils"
 local GraphicsUtils = require "lib.utils"
+local Tween = require "lib.tween"
 
 local Particulator = require "particulator"
 local BallCallbacks = require "ballCallbacks"
@@ -63,17 +64,18 @@ function ingame:hitBlock(block)
 end
 
 function ingame:startGameOverBanner()
-    self.gameOverBanner = self:createItem("resources/gameOver.png", 272, 0)
+    self.gameOverBanner = self:createItem("resources/gameOver.png", 400)
 end
 
-function ingame:createItem(resource, x, pause, onSelected, r, g, b)
+function ingame:createItem(resource, x, onSelected, r, g, b)
     local image = love.graphics.newImage(resource)
     local menuItem = {
         image = image, 
-        l = 800-256, x = x, w = 512, h = 256, 
+        x = -256, w = 512, h = 256, 
         onSelected = onSelected,
         r = r or 255, g = g or 255, b = b or 255, a = 0}
-    --self.timer:add(pause, createMenuItemTweenFunction(menuItem, 0.50, "linear"))
+    
+    menuItem.tween = Tween.new(0.5, menuItem, {x = x}, "linear") 
     return menuItem
 end
 
@@ -273,6 +275,9 @@ function ingame:update(dt)
     
     local endTime = love.timer.getTime()
     self.updateTime = endTime - startTime    
+    if self.gameOverBanner and self.gameOverBanner.tween then
+        self.gameOverBanner.tween:update(dt)
+    end
 end
 
 function ingame:draw()
@@ -292,7 +297,7 @@ function ingame:draw()
     self.comboBox:draw()
     
     if self.gameOverBanner then
-        love.graphics.draw(self.gameOverBanner.image, (800/2)-256, (600/2)-128)
+        love.graphics.draw(self.gameOverBanner.image, self.gameOverBanner.x - (self.gameOverBanner.w/2), (600/2)-128)
     end
 end
 
