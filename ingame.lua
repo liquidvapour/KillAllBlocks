@@ -29,7 +29,8 @@ local instructions = [[
 ]]
 
 local blockBurnTime = 0.25
-
+local gameOverPauseInSeconds = 2
+local gameOverSlideTimeInSeconds = 0.5
 local playerStates = {}
 
 local function removeItemFrom(tbl, item)
@@ -59,7 +60,7 @@ function ingame:hitBlock(block)
     
     if self.blockCount == 0 then
         self:startGameOverBanner()
-        self.timer:add(1, function() self:gotoGameOver() end)
+        self.timer:add(gameOverPauseInSeconds, function() self:gotoGameOver() end)
     end
 end
 
@@ -75,7 +76,7 @@ function ingame:createItem(resource, x, onSelected, r, g, b)
         onSelected = onSelected,
         r = r or 255, g = g or 255, b = b or 255, a = 0}
     
-    menuItem.tween = Tween.new(0.5, menuItem, {x = x}, "linear") 
+    menuItem.tween = Tween.new(gameOverSlideTimeInSeconds, menuItem, {x = x}, "linear") 
     return menuItem
 end
 
