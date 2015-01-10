@@ -1,9 +1,9 @@
 @echo off
 echo --------------------------------------------------------------------------
-echo -- building Kill All Blocks                                             --
+echo -- building %love_file_path%
 echo --------------------------------------------------------------------------
 
-if not exist .\%release_path% md %release_path%
+if not exist .\%KAB_data_path% md %KAB_data_path%
 if exist %love_file_path% del %love_file_path%
 
 zip -r %love_file_path% *
