@@ -18,6 +18,7 @@ local function getPaddleParticleSystem()
     local twoPi = 2 * math.pi
     particleSystem:setRotation(0, twoPi)
     particleSystem:setSpin(-twoPi, 0)
+    particleSystem:stop()
 
     return particleSystem
 end
@@ -37,6 +38,7 @@ local function getTargetParticleSystem()
     local twoPi = 2 * math.pi
     particleSystem:setRotation(0, twoPi)
     particleSystem:setSpin(twoPi, 0)
+    particleSystem:stop()
 
     return particleSystem
 end
@@ -53,6 +55,7 @@ local function getGlowParticleSystem(blockBurnTime)
     particleSystem:setColors(246, 232, 8, 255, 246, 97, 8, 0)
     particleSystem:setSpeed(0, 100)
     particleSystem:setAreaSpread("uniform", 64, 16)
+    particleSystem:stop()
 
     return particleSystem
 end
@@ -67,10 +70,12 @@ end
 
 
 function Particulator:hitBlock(block)
-    self.timer:add(self.blockBurnTime, function() 
-        self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t) 
-        self.targetParticles:emit(4)
-    end)
+    self.timer:add(
+        self.blockBurnTime, 
+        function() 
+            self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t) 
+            self.targetParticles:emit(4)
+        end)
     self.glowParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t)
     self.glowParticles:start()
 end
