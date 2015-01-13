@@ -136,7 +136,7 @@ function Ball:updateInFlight(context, dt)
         local tl, tt, nx, ny, bl, bt = col:getBounce()
         
         local dir
-        if hitPaddle then
+        if hitPaddle and ny == -1 then
             dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
             local a = vector(tl, tt)
