@@ -116,6 +116,12 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
     return dir, bl, bt
 end
 
+function Ball:standardBounce(tl, tt, bl, bt)
+    local a = vector(tl, tt)
+    local b = vector(bl, bt)
+    local dirtmp = b - a
+    return dirtmp:normalized()        
+end
 
 function Ball:updateInFlight(context, dt)
   local dx = self.velocity.x * dt
@@ -139,10 +145,7 @@ function Ball:updateInFlight(context, dt)
         if hitPaddle and ny == -1 then
             dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
-            local a = vector(tl, tt)
-            local b = vector(bl, bt)
-            local dirtmp = b - a
-            dir = dirtmp:normalized()        
+            dir = self:standardBounce(tl, tt, bl, bt)
         end
 
         cols, len = self.world:check(self, bl, bt)
