@@ -79,7 +79,7 @@ local function rotate(x, y, r)
     local newX = c * x - s * y
     local newY = s * x + c * y
     print(("result %0.3f, %0.3f"):format(newX, newY))
-    return newX, newY
+    return vector(newX, newY)
 end
 
 function Ball:updateInFlight(context, dt)
@@ -106,11 +106,7 @@ function Ball:updateInFlight(context, dt)
             print("start: "..start.x..", "..start.y)
             local colPos = vector(tl, tt)
             print("colPos: "..colPos.x..", "..colPos.y)
-            local l = start - colPos 
-            print("l unnormalized: "..l.x..", "..l.y)
             
-            l = l:normalized()
-
             local ballCenterX = tl + (self.w / 2)
             local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
             local collisionCenter = paddleCenterX - ballCenterX
@@ -119,10 +115,8 @@ function Ball:updateInFlight(context, dt)
             local offset = math.clamp(-xdif, offset, xdif)
             print(("offset: %0.3f"):format(offset))
             local bounceAngleInRadians = degToRad(offset)
-            local newDirX, newDirY = rotate(0, -1, bounceAngleInRadians)
-            print("newDirX: "..newDirX..", newDirY: "..newDirY)
-
-            local r = vector(newDirX, newDirY)
+            local r = rotate(0, -1, bounceAngleInRadians)
+            print("r: "..r.x..", "..r.y)
             
             local bouncePos = vector(bl, bt)
             
@@ -132,8 +126,6 @@ function Ball:updateInFlight(context, dt)
             
             local newLocation = start + (r * bounceDist)
 
-            
-            print("r: "..r.x..", "..r.y)
             print("newLocation: "..newLocation.x..", "..newLocation.y)
             bl, bt = newLocation:unpack()
             dir = r
