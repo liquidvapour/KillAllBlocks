@@ -82,6 +82,41 @@ local function rotate(x, y, r)
     return vector(newX, newY)
 end
 
+function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
+    local colPos = vector(tl, tt)
+    print("colPos: "..colPos.x..", "..colPos.y)
+    
+    local ballCenterX = tl + (self.w / 2)
+    local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
+    local collisionCenter = paddleCenterX - ballCenterX
+    local xdif = 45
+    local offset = -((collisionCenter / (context:getPaddle().w / 2)) * xdif)
+    offset = math.clamp(-xdif, offset, xdif)
+    print(("offset: %0.3f"):format(offset))
+    local bounceAngleInRadians = degToRad(offset)
+    local r = rotate(0, -1, bounceAngleInRadians)
+    print("r: "..r.x..", "..r.y)
+    
+    local bouncePos = vector(bl, bt)
+    
+    local bounceDist = colPos:dist(bouncePos)
+    
+    print("bounceDist: "..bounceDist)
+    
+    local start = vector(self.l, self.t)
+    print("start: "..start.x..", "..start.y)
+    local newLocation = start + (r * bounceDist)
+
+    print("newLocation: "..newLocation.x..", "..newLocation.y)
+    bl, bt = newLocation:unpack()
+    dir = r
+    
+    context:hitPaddle(bl, bt, bounceAngleInRadians)
+
+    return dir, bl, bt
+end
+
+
 function Ball:updateInFlight(context, dt)
   local dx = self.velocity.x * dt
   local dy = self.velocity.y * dt
@@ -102,35 +137,7 @@ function Ball:updateInFlight(context, dt)
         
         local dir
         if hitPaddle then
-            local start = vector(self.l, self.t)
-            print("start: "..start.x..", "..start.y)
-            local colPos = vector(tl, tt)
-            print("colPos: "..colPos.x..", "..colPos.y)
-            
-            local ballCenterX = tl + (self.w / 2)
-            local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
-            local collisionCenter = paddleCenterX - ballCenterX
-            local xdif = 45
-            local offset = -((collisionCenter / (context:getPaddle().w / 2)) * xdif)
-            local offset = math.clamp(-xdif, offset, xdif)
-            print(("offset: %0.3f"):format(offset))
-            local bounceAngleInRadians = degToRad(offset)
-            local r = rotate(0, -1, bounceAngleInRadians)
-            print("r: "..r.x..", "..r.y)
-            
-            local bouncePos = vector(bl, bt)
-            
-            local bounceDist = colPos:dist(bouncePos)
-            
-            print("bounceDist: "..bounceDist)
-            
-            local newLocation = start + (r * bounceDist)
-
-            print("newLocation: "..newLocation.x..", "..newLocation.y)
-            bl, bt = newLocation:unpack()
-            dir = r
-            
-            context:hitPaddle(bl, bt, bounceAngleInRadians)
+            dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
             local a = vector(tl, tt)
             local b = vector(bl, bt)
