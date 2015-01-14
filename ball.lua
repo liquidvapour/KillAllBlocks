@@ -122,10 +122,10 @@ function Ball:standardBounce(tl, tt, bl, bt)
     return dirtmp:normalized()        
 end
 
-function Ball:moveBallTo(context, l, t, d)
+function Ball:moveBallTo(context, l, t, velocity, d)
     local depth = d or 0
     local cols, len = self.world:check(self, l, t)
-    local newVelocity = self.velocity
+    local newVelocity = velocity
 
     if depth > 0 then
         print("ball bounce depth: "..depth)
@@ -143,26 +143,25 @@ function Ball:moveBallTo(context, l, t, d)
         local col = cols[1]
         if col.other == context:getGoal() then
             self:hitGoal()
-            return newVelocity
-        end
-
-        local tl, tt, nx, ny, bl, bt = col:getBounce()
-
-        local dir
-
-        if col.other == context:getPaddle() and ny == -1 then
-            dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
-            dir = self:standardBounce(tl, tt, bl, bt)
-            if col.other.tag == "side" then
-                context:hitSide()
-            else
-                context:hitBlock(col.other)
-            end
-        end
+            local tl, tt, nx, ny, bl, bt = col:getBounce()
 
-        self.velocity = dir * self.velocity:len()
-        newVelocity = self:moveBallTo(context, bl, bt, depth + 1)      
+            local dir
+
+            if col.other == context:getPaddle() and ny == -1 then
+                dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
+            else
+                dir = self:standardBounce(tl, tt, bl, bt)
+                if col.other.tag == "side" then
+                    context:hitSide()
+                else
+                    context:hitBlock(col.other)
+                end
+            end
+
+            velocity = dir * velocity:len()
+            newVelocity = self:moveBallTo(context, bl, bt, velocity, depth + 1)
+        end
     end
     return newVelocity
 end
@@ -173,7 +172,7 @@ function Ball:updateInFlight(context, dt)
   
   if dx ~= 0 or dy ~= 0 then
     local future_l, future_t = self.l + dx, self.t + dy
-    self.velocity = self:moveBallTo(context, future_l, future_t)
+    self.velocity = self:moveBallTo(context, future_l, future_t, self.velocity)
   end
 end
 
