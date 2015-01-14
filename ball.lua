@@ -95,7 +95,6 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
     print(("offset: %0.3f"):format(offset))
     local bounceAngleInRadians = degToRad(offset)
     local r = rotate(0, -1, bounceAngleInRadians)
-    print("r: "..r.x..", "..r.y)
     
     local bouncePos = vector(bl, bt)
     
@@ -126,20 +125,25 @@ end
 function Ball:moveBallTo(context, l, t, d)
     local depth = d or 0
     local cols, len = self.world:check(self, l, t)
-    local newVelocity
+    local newVelocity = self.velocity
 
     if depth > 0 then
         print("ball bounce depth: "..depth)
     end
     
+    if depth > 3 then
+        print("ball bounce fail! pretend we hit the goal: "..depth)
+        self:hitGoal()
+        return newVelocity
+    end
+    
     if len == 0 then
-        self:moveTo(l, t)
-        newVelocity = self.velocity
+        self:moveTo(l, t)        
     else
         local col = cols[1]
         if col.other == context:getGoal() then
             self:hitGoal()
-            return
+            return newVelocity
         end
 
         local tl, tt, nx, ny, bl, bt = col:getBounce()
