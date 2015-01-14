@@ -136,34 +136,33 @@ function Ball:updateInFlight(context, dt)
       local col, tl, tt, bl, bt
       while len > 0 do
         col = cols[1]
+        if col.other == context:getGoal() then
+            self:hitGoal()
+            return
+        end
         
-        local hitPaddle = col.other == context:getPaddle()
         
         local tl, tt, nx, ny, bl, bt = col:getBounce()
         
         local dir
-        if hitPaddle and ny == -1 then
+        
+        if col.other == context:getPaddle() and ny == -1 then
             dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
             dir = self:standardBounce(tl, tt, bl, bt)
-        end
-
-        cols, len = self.world:check(self, bl, bt)
-        if len == 0 or (cols[0] and cols[0].other == context:getPaddle()) then
-            self:moveTo(bl, bt)
-        end
-        
-        self.velocity = dir * self.velocity:len()
-       
-        if col.other == context:getGoal() then
-            self:hitGoal()
-        elseif not hitPaddle then
             if col.other.tag == "side" then
                 context:hitSide()
             else
                 context:hitBlock(col.other)
             end
         end
+
+        cols, len = self.world:check(self, bl, bt)
+        if len == 0 then
+            self:moveTo(bl, bt)
+        end
+        
+        self.velocity = dir * self.velocity:len()
       end
     end
   end
