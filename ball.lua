@@ -123,15 +123,10 @@ function Ball:standardBounce(tl, tt, bl, bt)
     return dirtmp:normalized()        
 end
 
-function Ball:updateInFlight(context, dt)
-  local dx = self.velocity.x * dt
-  local dy = self.velocity.y * dt
-  
-  if dx ~= 0 or dy ~= 0 then
-    local future_l, future_t = self.l + dx, self.t + dy
-    local cols, len = self.world:check(self, future_l, future_t)
+function Ball:moveBallTo(context, l, t)
+    local cols, len = self.world:check(self, l, t)
     if len == 0 then
-        self:moveTo(future_l, future_t)
+        self:moveTo(l, t)
     else
       local col, tl, tt, bl, bt
       while len > 0 do
@@ -140,7 +135,6 @@ function Ball:updateInFlight(context, dt)
             self:hitGoal()
             return
         end
-        
         
         local tl, tt, nx, ny, bl, bt = col:getBounce()
         
@@ -165,6 +159,15 @@ function Ball:updateInFlight(context, dt)
         self.velocity = dir * self.velocity:len()
       end
     end
+end
+
+function Ball:updateInFlight(context, dt)
+  local dx = self.velocity.x * dt
+  local dy = self.velocity.y * dt
+  
+  if dx ~= 0 or dy ~= 0 then
+    local future_l, future_t = self.l + dx, self.t + dy
+    self:moveBallTo(context, future_l, future_t)
   end
 end
 
