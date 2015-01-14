@@ -123,23 +123,29 @@ function Ball:standardBounce(tl, tt, bl, bt)
     return dirtmp:normalized()        
 end
 
-function Ball:moveBallTo(context, l, t)
+function Ball:moveBallTo(context, l, t, d)
+    local depth = d or 0
     local cols, len = self.world:check(self, l, t)
+    local newVelocity
+
+    if depth > 0 then
+        print("ball bounce depth: "..depth)
+    end
+    
     if len == 0 then
         self:moveTo(l, t)
+        newVelocity = self.velocity
     else
-      local col, tl, tt, bl, bt
-      while len > 0 do
-        col = cols[1]
+        local col = cols[1]
         if col.other == context:getGoal() then
             self:hitGoal()
             return
         end
-        
+
         local tl, tt, nx, ny, bl, bt = col:getBounce()
-        
+
         local dir
-        
+
         if col.other == context:getPaddle() and ny == -1 then
             dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
         else
@@ -151,14 +157,10 @@ function Ball:moveBallTo(context, l, t)
             end
         end
 
-        cols, len = self.world:check(self, bl, bt)
-        if len == 0 then
-            self:moveTo(bl, bt)
-        end
-        
         self.velocity = dir * self.velocity:len()
-      end
+        newVelocity = self:moveBallTo(context, bl, bt, depth + 1)      
     end
+    return newVelocity
 end
 
 function Ball:updateInFlight(context, dt)
@@ -167,7 +169,7 @@ function Ball:updateInFlight(context, dt)
   
   if dx ~= 0 or dy ~= 0 then
     local future_l, future_t = self.l + dx, self.t + dy
-    self:moveBallTo(context, future_l, future_t)
+    self.velocity = self:moveBallTo(context, future_l, future_t)
   end
 end
 
