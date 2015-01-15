@@ -20,7 +20,7 @@ end
 
 function Target:hit()
     self.hot = true
-    self.timer:add(0.15, function() self.hot = false end)
+    self.timer:add(0.175, function() self.hot = false end)
 end
 
 function Target:draw(r,g,b)

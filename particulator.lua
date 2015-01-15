@@ -45,8 +45,8 @@ end
 
 local function getGlowParticleSystem(blockBurnTime)
     local image = love.graphics.newImage("resources/particle.png")
-    local particleSystem = love.graphics.newParticleSystem(image, 10000)
-    particleSystem:setEmissionRate(350)
+    local particleSystem = love.graphics.newParticleSystem(image, 1000)
+    particleSystem:setEmissionRate(175)
     particleSystem:setEmitterLifetime(blockBurnTime + 0.1)
     particleSystem:setParticleLifetime(0.25, 0.25)
     particleSystem:setSizes(0.2, 1)
