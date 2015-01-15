@@ -38,7 +38,7 @@ local function getTargetParticleSystem()
     local twoPi = 2 * math.pi
     particleSystem:setRotation(0, twoPi)
     particleSystem:setSpin(twoPi, 0)
-    particleSystem:stop()
+    particleSystem:start()
 
     return particleSystem
 end
@@ -70,9 +70,11 @@ end
 
 
 function Particulator:hitBlock(block)
+    print("hitBlock")
     self.timer:add(
         self.blockBurnTime, 
         function() 
+            print("throwing blocks")
             self.targetParticles:setPosition((block.w/2) + block.l, (block.h/2) + block.t) 
             self.targetParticles:emit(4)
         end)
