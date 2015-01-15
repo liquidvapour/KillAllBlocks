@@ -132,7 +132,7 @@ function Ball:moveBallTo(context, l, t, velocity, d)
     end
     
     if depth > 3 then
-        print("ball bounce fail! pretend we hit the goal: "..depth)
+        print("ball bounce fail! pretend we hit the goal because we got the "..depth.." collisions in one frame.")
         self:hitGoal()
         return newVelocity
     end
