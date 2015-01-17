@@ -98,6 +98,7 @@ function ingame:hitGoal()
     self.myScorer:hitGoal()
     self:updateUiScores()
     self.soundbox:hitGoal()
+    self.upButtonTut.visible = true
 end
 
 function ingame:hitTarget()
@@ -198,6 +199,15 @@ function ingame:setupSides()
     self:addToBlockList(Side:new(self.world, 800-32, 32,  32, 600-((32*2)+8)))
 end
 
+function ingame:createTutorials()
+    self.rightButtonTut = ButtonTut:new("resources/right_arrow.png", self.timer)
+    self.leftButtonTut = ButtonTut:new("resources/left_arrow.png", self.timer)
+    self.leftButtonTut.location.x = 300
+
+    self.upButtonTut = ButtonTut:new("resources/up_arrow.png", self.timer)
+    self.upButtonTut.location.x = 400
+end
+
 function ingame:enteredState()
     math.randomseed(love.timer.getTime())
     
@@ -222,13 +232,7 @@ function ingame:enteredState()
 
     self.ballCallbacks = BallCallbacks:new(self)
     
-    self.rightButtonTut = ButtonTut:new("resources/right_arrow.png", self.timer)
-    self.leftButtonTut = ButtonTut:new("resources/left_arrow.png", self.timer)
-    self.leftButtonTut.location.x = 300
-
-    self.upButtonTut = ButtonTut:new("resources/up_arrow.png", self.timer)
-    self.upButtonTut.location.x = 400
-
+    self:createTutorials()
     
     self.ballCallbacks:registerAll(
         function(bl, bt, bounceAngleInRadians) self:hitPaddle(bl, bt, bounceAngleInRadians) end,
@@ -320,6 +324,18 @@ end
 
 function ingame:escPressed()
     self:gotoState("menu")
+end
+
+function ingame:rightPressed()
+    self.rightButtonTut:pressed()
+end
+
+function ingame:upPressed()
+    self.upButtonTut:pressed()
+end
+
+function ingame:leftPressed()
+    self.leftButtonTut:pressed()
 end
 
 return ingame

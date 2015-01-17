@@ -115,7 +115,12 @@ function love.keypressed(k)
   if k=="return" and myGame.returnPressed then myGame:returnPressed() end
   if k=="tab"    then shouldDrawDebug = not shouldDrawDebug end
   if k=="delete" then collectgarbage("collect") end
+  if k=="right" and myGame.rightPressed then myGame:rightPressed() end
+  if k=="up" and myGame.upPressed then myGame:upPressed() end  
+  if k=="left" and myGame.leftPressed then myGame:leftPressed() end  
 end
+
+
 
 function love.mousepressed(x, y, button)
     if button == "l" then

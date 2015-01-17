@@ -186,7 +186,7 @@ function Ball:updateOnPaddle(context, dt)
     local pl, pt = paddle.l, paddle.t
     self:moveTo(pl + (paddle.w / 2) - (self.w / 2), pt - (self.h + 10))
     
-    if context:isReady() and love.keyboard.isDown(" ") then        
+    if context:isReady() and love.keyboard.isDown("up") then        
         self:setCurrentState("updateInFlight")
         local dir = vector(math.random() * 0.2, -1):normalized()
         self.velocity = dir * self.speed
