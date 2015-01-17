@@ -200,12 +200,19 @@ function ingame:setupSides()
 end
 
 function ingame:createTutorials()
+    local offset = 10
     self.rightButtonTut = ButtonTut:new("resources/right_arrow.png", self.timer)
+    self.rightButtonTut.location.x = 500
+    self.rightButtonTut.offset.x = offset
+    
     self.leftButtonTut = ButtonTut:new("resources/left_arrow.png", self.timer)
     self.leftButtonTut.location.x = 300
+    self.leftButtonTut.offset.x = -offset
 
     self.upButtonTut = ButtonTut:new("resources/up_arrow.png", self.timer)
     self.upButtonTut.location.x = 400
+    self.upButtonTut.location.y = 450
+    self.upButtonTut.offset.y = -offset
 end
 
 function ingame:enteredState()
@@ -263,7 +270,9 @@ function ingame:enteredState()
     self.thingsToUpdate:add(self.scoreBox)
     self.thingsToUpdate:add(self.comboBox)
     self.thingsToUpdate:add(self.particulator)
-    
+    self.thingsToUpdate:add(self.leftButtonTut)
+    self.thingsToUpdate:add(self.upButtonTut)
+    self.thingsToUpdate:add(self.rightButtonTut)
     --self:startGameOverBanner()
 
 end
