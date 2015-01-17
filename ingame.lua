@@ -17,6 +17,8 @@ local Tween = require "lib.tween"
 
 local Particulator = require "particulator"
 local BallCallbacks = require "ballCallbacks"
+local ButtonTut = require "buttonTut"
+
 local ingame = Game:addState("ingame")
 
 local instructions = [[
@@ -74,7 +76,8 @@ function ingame:createItem(resource, x, onSelected, r, g, b)
         image = image, 
         x = -256, w = 512, h = 256, 
         onSelected = onSelected,
-        r = r or 255, g = g or 255, b = b or 255, a = 0}
+        r = r or 255, g = g or 255, b = b or 255, a = 0
+    }
     
     menuItem.tween = Tween.new(gameOverSlideTimeInSeconds, menuItem, {x = x}, "linear") 
     return menuItem
@@ -219,6 +222,14 @@ function ingame:enteredState()
 
     self.ballCallbacks = BallCallbacks:new(self)
     
+    self.rightButtonTut = ButtonTut:new("resources/right_arrow.png", self.timer)
+    self.leftButtonTut = ButtonTut:new("resources/left_arrow.png", self.timer)
+    self.leftButtonTut.location.x = 300
+
+    self.upButtonTut = ButtonTut:new("resources/up_arrow.png", self.timer)
+    self.upButtonTut.location.x = 400
+
+    
     self.ballCallbacks:registerAll(
         function(bl, bt, bounceAngleInRadians) self:hitPaddle(bl, bt, bounceAngleInRadians) end,
         function() self:hitSide() end, 
@@ -260,6 +271,7 @@ function ingame:exitedState(oldState)
     self.paddleParticleSystem = nil
     self.targetParticleSystem = nil
     self.gameOverBanner = nil
+    
 end
 
 
@@ -296,10 +308,14 @@ function ingame:draw()
     
     self.scoreBox:draw()
     self.comboBox:draw()
+    self.rightButtonTut:draw()
+    self.leftButtonTut:draw()
+    self.upButtonTut:draw()
     
     if self.gameOverBanner then
         love.graphics.draw(self.gameOverBanner.image, self.gameOverBanner.x - (self.gameOverBanner.w/2), (600/2)-128)
     end
+    
 end
 
 function ingame:escPressed()
