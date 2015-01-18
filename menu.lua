@@ -32,8 +32,8 @@ function menuState:enteredState()
     self.backgroundImage = love.graphics.newImage("resources/clouds01.png")
     self.backgroundImage:setWrap("repeat", "repeat")
     
-    self.backg = Background:new(self.backgroundImage, 0, 0, 50, -1, -1)    
-    self.backg2 = Background:new(self.backgroundImage, 0, 65, 20, 1, 0)
+    self.backg = Background:new(self.backgroundImage, 0, 0, 20, -1, 1)    
+    self.backg2 = Background:new(self.backgroundImage, 0, 65, 10, -1, 1)
     love.graphics.setBackgroundColor(0, 0, 0)
     
     self.soundbox:startIntroBackingTrack()
