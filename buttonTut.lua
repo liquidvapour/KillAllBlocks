@@ -15,11 +15,6 @@ function ButtonTut:initialize(resource, timer)
     self.visible = true
     
     local selfRef = self
---    timer:addPeriodic(
---        0.1, 
---        function() 
---            selfRef.dimmed = not selfRef.dimmed 
---        end)
 
     self.totalTime = 0
 end
@@ -29,7 +24,6 @@ function ButtonTut:update(dt)
     local t = sawTooth(self.totalTime * 2)
     self._location.x = lerp(self.location.x, self.location.x + self.offset.x, t)
     self._location.y = lerp(self.location.y, self.location.y + self.offset.y, t)
-    print("totalTime:"..self.totalTime..", t:"..t..", x:"..self.location.x..", y:"..self.location.y)
 end
 
 function ButtonTut:draw()
@@ -41,7 +35,6 @@ function ButtonTut:draw()
     end
     love.graphics.setColor(255, 255, 255, alpha)
     love.graphics.draw(self.image, self._location.x-(self.location.w/2), self._location.y-(self.location.h/2))
-
 end
 
 function ButtonTut:pressed()

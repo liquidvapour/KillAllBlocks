@@ -98,7 +98,7 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
     offset = math.clamp(-xdif, offset, xdif)
     print(("offset: %0.3f"):format(offset))
     local bounceAngleInRadians = degToRad(offset)
-    local r = rotate(0, -1, bounceAngleInRadians)
+    local newVector = rotate(0, -1, bounceAngleInRadians)
     
     local bouncePos = Vector(bl, bt)
     
@@ -108,15 +108,14 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
     
     local start = Vector(self.l, self.t)
     print("start: "..start.x..", "..start.y)
-    local newLocation = start + (r * bounceDist)
+    local newLocation = start + (newVector * bounceDist)
 
     print("newLocation: "..newLocation.x..", "..newLocation.y)
     bl, bt = newLocation:unpack()
-    dir = r
     
     context:hitPaddle(bl, bt, bounceAngleInRadians)
 
-    return dir, bl, bt
+    return newVector, bl, bt
 end
 
 function Ball:standardBounce(tl, tt, bl, bt)
