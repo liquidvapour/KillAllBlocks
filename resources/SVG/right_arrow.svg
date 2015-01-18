@@ -14,7 +14,10 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="right_arrow.svg"
+   inkscape:export-filename="C:\Users\ra-el\Documents\dev\love\KillAllBlocks\resources\right_arrow.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,8 +28,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="19.375"
-     inkscape:cx="15.948387"
-     inkscape:cy="16"
+     inkscape:cx="7.4580644"
+     inkscape:cy="15.407519"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -38,7 +41,9 @@
      inkscape:window-height="803"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:snap-bbox="true"
+     inkscape:snap-page="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -56,6 +61,14 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-1020.3622)">
+    <rect
+       style="fill:none;stroke:#577572;stroke-width:0.97908479;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect3885"
+       width="31.020914"
+       height="31.020842"
+       x="0.48954239"
+       y="1020.8517"
+       ry="6.4269938" />
     <path
        sodipodi:type="star"
        style="fill:#859f9c;fill-opacity:1;stroke:#577572;stroke-width:0.50000000000000000;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
