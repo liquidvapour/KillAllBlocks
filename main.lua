@@ -96,17 +96,33 @@ function love.update(dt)
     myGame:update(dt)
 end
 
-function love.draw()
+local function drawGameToCanvas()
     canvas:clear()
     love.graphics.setCanvas(canvas)
     love.graphics.setBlendMode('alpha')
-    myGame:draw()    
+    myGame:draw()
     love.graphics.setCanvas()
+end
+
+local function drawWithArtifacts()
+    drawGameToCanvas()
     
     love.graphics.setBlendMode('premultiplied')    
     love.graphics.setShader(shader)
     love.graphics.draw(mesh, 0, 0)
     love.graphics.setShader()
+end
+
+local function cleanDraw()
+    drawGameToCanvas()
+    
+    love.graphics.setBlendMode('premultiplied')    
+    love.graphics.draw(mesh, 0, 0)
+    love.graphics.setShader()
+end
+
+function love.draw()
+    cleanDraw()
 end
 
 -- Non-player keypresses

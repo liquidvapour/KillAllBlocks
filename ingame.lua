@@ -151,8 +151,10 @@ function ingame:drawMessage()
   -- RP 2014-12-31: this is s..l..o..w! so I commented it out.
   --love.graphics.print(msg, 550, 10)
   
-  love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 540)
   love.graphics.print(("update time: %.3fms"):format(self.updateTime * 1000), 630, 510)
+  love.graphics.print(("draw time: %.3fms"):format(self.drawTime * 1000), 630, 530)
+  love.graphics.print(("FPS: %.0f"):format(love.timer.getFPS()), 630, 550)
+  
 end
 
 function ingame:drawDebug()

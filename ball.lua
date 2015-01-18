@@ -63,8 +63,6 @@ function Ball:draw()
 end
 
 local function reflect(l, n)
-    print("reflect l: "..l.x..", "..l.y)
-    print("reflect n: "..n.x..", "..n.y)
     return 2 * (l * n) * n - l
 end
 
@@ -87,27 +85,28 @@ local function rotate(x, y, r)
 end
 
 function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
-    local colPos = Vector(tl, tt)
-    print("colPos: "..colPos.x..", "..colPos.y)
     
-    local ballCenterX = tl + (self.w / 2)
     local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
+    local ballCenterX = tl + (self.w / 2)
     local collisionCenter = paddleCenterX - ballCenterX
     local xdif = 45
     local offset = -((collisionCenter / (context:getPaddle().w / 2)) * xdif)
     offset = math.clamp(-xdif, offset, xdif)
     print(("offset: %0.3f"):format(offset))
-    local bounceAngleInRadians = degToRad(offset)
-    local newVector = rotate(0, -1, bounceAngleInRadians)
     
-    local bouncePos = Vector(bl, bt)
     
-    local bounceDist = colPos:dist(bouncePos)
-    
-    print("bounceDist: "..bounceDist)
     
     local start = Vector(self.l, self.t)
     print("start: "..start.x..", "..start.y)
+    
+    local bounceAngleInRadians = degToRad(offset)
+    local newVector = rotate(0, -1, bounceAngleInRadians)
+    
+    local colPos = Vector(tl, tt)
+    print("colPos: "..colPos.x..", "..colPos.y)
+    local bounceDist = colPos:dist(Vector(bl, bt))    
+    print("bounceDist: "..bounceDist)
+    
     local newLocation = start + (newVector * bounceDist)
 
     print("newLocation: "..newLocation.x..", "..newLocation.y)
