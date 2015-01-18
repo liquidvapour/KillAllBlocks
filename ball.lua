@@ -3,6 +3,10 @@ local Vector = require "hump.vector"
 
 local Ball = Class("Ball")
 
+local function collidingWithTop(nx, ny)
+    return ny == -1
+end
+
 function Ball:initialize(world, timer, context)
     self.world = world
     self.timer = timer
@@ -124,21 +128,23 @@ end
 
 function Ball:moveBallTo(context, l, t, vector, d)
     local recursionDepth = d or 0
-    local cols, len = self.world:check(self, l, t)
-    local newVector = vector
 
     if recursionDepth > 0 then
         print("ball bounce recursionDepth: "..recursionDepth)
     end
     
+    local newVector = vector
+
     if recursionDepth > 3 then
         print("ball bounce fail! pretend we hit the goal because we got the "..recursionDepth.." collisions in one frame.")
         self:hitGoal()
         return newVector
     end
     
+    local cols, len = self.world:check(self, l, t)
+    
     if len == 0 then
-        self:moveTo(l, t)        
+        self:moveTo(l, t)
     else
         local col = cols[1]
         if col.other == context:getGoal() then
@@ -148,7 +154,7 @@ function Ball:moveBallTo(context, l, t, vector, d)
 
             local dir
 
-            if col.other == context:getPaddle() and ny == -1 then
+            if col.other == context:getPaddle() and collidingWithTop(nx, ny) then
                 dir, bl, bt = self:bounceOfPaddle(tl, tt, bl, bt, context)
             else
                 dir = self:standardBounce(tl, tt, bl, bt)
@@ -158,7 +164,7 @@ function Ball:moveBallTo(context, l, t, vector, d)
                     context:hitBlock(col.other)
                 end
             end
-
+            self:moveTo(tl, tt)
             newVector = self:moveBallTo(context, bl, bt, dir, recursionDepth + 1)
         end
     end
