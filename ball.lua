@@ -1,5 +1,5 @@
 local Class = require "lib.middleclass"
-local vector = require "hump.vector"
+local Vector = require "hump.vector"
 
 local Ball = Class("Ball")
 
@@ -12,7 +12,7 @@ function Ball:initialize(world, timer, context)
     self.t = 50
     self.w = 32
     self.h = 32
-    self.velocity = vector(50, 267)
+    self.vector = Vector(50, 267):normalized()
     self.speed = 300
     self.inplay = true
     
@@ -79,11 +79,11 @@ local function rotate(x, y, r)
     local newX = c * x - s * y
     local newY = s * x + c * y
     print(("result %0.3f, %0.3f"):format(newX, newY))
-    return vector(newX, newY)
+    return Vector(newX, newY)
 end
 
 function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
-    local colPos = vector(tl, tt)
+    local colPos = Vector(tl, tt)
     print("colPos: "..colPos.x..", "..colPos.y)
     
     local ballCenterX = tl + (self.w / 2)
@@ -96,13 +96,13 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
     local bounceAngleInRadians = degToRad(offset)
     local r = rotate(0, -1, bounceAngleInRadians)
     
-    local bouncePos = vector(bl, bt)
+    local bouncePos = Vector(bl, bt)
     
     local bounceDist = colPos:dist(bouncePos)
     
     print("bounceDist: "..bounceDist)
     
-    local start = vector(self.l, self.t)
+    local start = Vector(self.l, self.t)
     print("start: "..start.x..", "..start.y)
     local newLocation = start + (r * bounceDist)
 
@@ -116,16 +116,16 @@ function Ball:bounceOfPaddle(tl, tt, bl, bt, context)
 end
 
 function Ball:standardBounce(tl, tt, bl, bt)
-    local a = vector(tl, tt)
-    local b = vector(bl, bt)
+    local a = Vector(tl, tt)
+    local b = Vector(bl, bt)
     local dirtmp = b - a
     return dirtmp:normalized()        
 end
 
-function Ball:moveBallTo(context, l, t, velocity, d)
+function Ball:moveBallTo(context, l, t, vector, d)
     local depth = d or 0
     local cols, len = self.world:check(self, l, t)
-    local newVelocity = velocity
+    local newVector = vector
 
     if depth > 0 then
         print("ball bounce depth: "..depth)
@@ -134,7 +134,7 @@ function Ball:moveBallTo(context, l, t, velocity, d)
     if depth > 3 then
         print("ball bounce fail! pretend we hit the goal because we got the "..depth.." collisions in one frame.")
         self:hitGoal()
-        return newVelocity
+        return newVector
     end
     
     if len == 0 then
@@ -159,20 +159,19 @@ function Ball:moveBallTo(context, l, t, velocity, d)
                 end
             end
 
-            velocity = dir * velocity:len()
-            newVelocity = self:moveBallTo(context, bl, bt, velocity, depth + 1)
+            newVector = self:moveBallTo(context, bl, bt, dir, depth + 1)
         end
     end
-    return newVelocity
+    return newVector
 end
 
 function Ball:updateInFlight(context, dt)
-  local dx = self.velocity.x * dt
-  local dy = self.velocity.y * dt
+  local dx = self.vector.x * self.speed * dt
+  local dy = self.vector.y * self.speed * dt
   
   if dx ~= 0 or dy ~= 0 then
     local future_l, future_t = self.l + dx, self.t + dy
-    self.velocity = self:moveBallTo(context, future_l, future_t, self.velocity)
+    self.vector = self:moveBallTo(context, future_l, future_t, self.vector)
   end
 end
 
@@ -188,8 +187,7 @@ function Ball:updateOnPaddle(context, dt)
     
     if context:isReady() and love.keyboard.isDown("up") then        
         self:setCurrentState("updateInFlight")
-        local dir = vector(math.random() * 0.2, -1):normalized()
-        self.velocity = dir * self.speed
+        self.vector = Vector(math.random() * 0.2, -1):normalized()
     end
 end
 
