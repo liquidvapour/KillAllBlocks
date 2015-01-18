@@ -123,16 +123,16 @@ function Ball:standardBounce(tl, tt, bl, bt)
 end
 
 function Ball:moveBallTo(context, l, t, vector, d)
-    local depth = d or 0
+    local recursionDepth = d or 0
     local cols, len = self.world:check(self, l, t)
     local newVector = vector
 
-    if depth > 0 then
-        print("ball bounce depth: "..depth)
+    if recursionDepth > 0 then
+        print("ball bounce recursionDepth: "..recursionDepth)
     end
     
-    if depth > 3 then
-        print("ball bounce fail! pretend we hit the goal because we got the "..depth.." collisions in one frame.")
+    if recursionDepth > 3 then
+        print("ball bounce fail! pretend we hit the goal because we got the "..recursionDepth.." collisions in one frame.")
         self:hitGoal()
         return newVector
     end
@@ -159,20 +159,21 @@ function Ball:moveBallTo(context, l, t, vector, d)
                 end
             end
 
-            newVector = self:moveBallTo(context, bl, bt, dir, depth + 1)
+            newVector = self:moveBallTo(context, bl, bt, dir, recursionDepth + 1)
         end
     end
     return newVector
 end
 
 function Ball:updateInFlight(context, dt)
-  local dx = self.vector.x * self.speed * dt
-  local dy = self.vector.y * self.speed * dt
-  
-  if dx ~= 0 or dy ~= 0 then
-    local future_l, future_t = self.l + dx, self.t + dy
-    self.vector = self:moveBallTo(context, future_l, future_t, self.vector)
-  end
+    local distanceThisFrame = self.speed * dt
+    local dx = self.vector.x * distanceThisFrame
+    local dy = self.vector.y * distanceThisFrame
+
+    if dx ~= 0 or dy ~= 0 then
+        local future_l, future_t = self.l + dx, self.t + dy
+        self.vector = self:moveBallTo(context, future_l, future_t, self.vector)
+    end
 end
 
 function Ball:hitGoal()
