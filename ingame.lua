@@ -185,7 +185,7 @@ function ingame:setupTargets()
     for x = 0, numColumns - 1 do
         for y = 0, numRows - 1 do
             tl = xOffset + (x * (targetWidth))
-            tt = 100 + (y * (targetHeight))
+            tt = 128 + (y * (targetHeight))
             self:addToBlockList(Target:new(self.world, tl, tt, targetWidth, targetHeight, nil, self.timer))
             count = count + 1
         end
