@@ -42,7 +42,7 @@ function love.run()
     end
 end
 
-local function getScreenMesh(canvas)
+local function getScreenMesh()
     local vertices = {
         {
             0, 0, -- position
@@ -81,7 +81,8 @@ function love.load()
 
     canvas = love.graphics.newCanvas(sceneWidth, sceneHeight)
     canvas:setFilter('linear', 'linear')
-    mesh = getScreenMesh(canvas)
+    mesh = getScreenMesh()
+    mesh:setTexture(canvas)
 
     local originalBlendMode = love.graphics.getBlendMode()
     print('originalBlendMode: '..originalBlendMode)
@@ -97,16 +98,16 @@ function love.update(dt)
 end
 
 function love.draw()
-    --love.graphics.setCanvas(canvas)
+    love.graphics.setCanvas(canvas)
     love.graphics.clear()
     love.graphics.setBlendMode('alpha')
     myGame:draw()
-    --love.graphics.setCanvas()
+    love.graphics.setCanvas()
 
-    --love.graphics.setBlendMode('alpha', 'premultiplied')
-    --love.graphics.setShader(shader)
-    --love.graphics.draw(mesh, 0, 0)
-    --love.graphics.setShader()
+    love.graphics.setBlendMode('alpha', 'premultiplied')
+    love.graphics.setShader(shader)
+    love.graphics.draw(mesh, 0, 0)
+    love.graphics.setShader()
 end
 
 -- Non-player keypresses
