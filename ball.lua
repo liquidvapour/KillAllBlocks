@@ -15,19 +15,19 @@ function Ball:initialize(world, timer, context)
     self.velocity = vector(50, 267)
     self.speed = 300
     self.inplay = true
-    
+
     self.r = 0
     self.g = 0
     self.b = 0
     self.a = 0
     self.states = {updateInFlight = self.updateInFlight, updateOnPaddle = self.updateOnPaddle}
     self.world:add(self, self.l, self.t, self.w, self.h)
-        
+
     self.image = love.graphics.newImage("resources/simpleGraphics_tiles32x32_0.png")
     self.image:setFilter("nearest", "nearest")
     self.quad = love.graphics.newQuad(64, 96, self.w, self.h, self.image:getWidth(), self.image:getHeight())
 
-    
+
     self:reset()
 end
 
@@ -85,7 +85,7 @@ end
 function Ball:updateInFlight(context, dt)
   local dx = self.velocity.x * dt
   local dy = self.velocity.y * dt
-  
+
   if dx ~= 0 or dy ~= 0 then
     local future_l, future_t = self.l + dx, self.t + dy
     local cols, len = self.world:check(self, future_l, future_t)
@@ -95,24 +95,24 @@ function Ball:updateInFlight(context, dt)
       local col, tl, tt, bl, bt
       while len > 0 do
         col = cols[1]
-        
+
         local hitPaddle = col.other == context:getPaddle()
-        
+
         local tl, tt, nx, ny, bl, bt = col:getBounce()
-        
+
         local dir
         if hitPaddle then
             local start = vector(self.l, self.t)
             print("start: "..start.x..", "..start.y)
             local colPos = vector(tl, tt)
             print("colPos: "..colPos.x..", "..colPos.y)
-            local l = start - colPos 
+            local l = start - colPos
             print("l unnormalized: "..l.x..", "..l.y)
-            
+
             l = l:normalized()
 
             local ballCenterX = tl + (self.w / 2)
-            local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)            
+            local paddleCenterX = context:getPaddle().l + (context:getPaddle().w / 2)
             local collisionCenter = paddleCenterX - ballCenterX
             local xdif = 45
             local offset = -((collisionCenter / (context:getPaddle().w / 2)) * xdif)
@@ -123,36 +123,36 @@ function Ball:updateInFlight(context, dt)
             print("newDirX: "..newDirX..", newDirY: "..newDirY)
 
             local r = vector(newDirX, newDirY)
-            
+
             local bouncePos = vector(bl, bt)
-            
+
             local bounceDist = colPos:dist(bouncePos)
-            
+
             print("bounceDist: "..bounceDist)
-            
+
             local newLocation = start + (r * bounceDist)
 
-            
+
             print("r: "..r.x..", "..r.y)
             print("newLocation: "..newLocation.x..", "..newLocation.y)
             bl, bt = newLocation:unpack()
             dir = r
-            
+
             context:hitPaddle(bl, bt, bounceAngleInRadians)
         else
             local a = vector(tl, tt)
             local b = vector(bl, bt)
             local dirtmp = b - a
-            dir = dirtmp:normalized()        
+            dir = dirtmp:normalized()
         end
 
         cols, len = self.world:check(self, bl, bt)
         if len == 0 or (cols[0] and cols[0].other == context:getPaddle()) then
             self:moveTo(bl, bt)
         end
-        
+
         self.velocity = dir * self.velocity:len()
-       
+
         if col.other == context:getGoal() then
             self:hitGoal()
         elseif not hitPaddle then
@@ -176,8 +176,8 @@ function Ball:updateOnPaddle(context, dt)
     local paddle = context:getPaddle()
     local pl, pt = paddle.l, paddle.t
     self:moveTo(pl + (paddle.w / 2) - (self.w / 2), pt - (self.h + 10))
-    
-    if context:isReady() and love.keyboard.isDown(" ") then        
+
+    if context:isReady() and love.keyboard.isDown("space") then
         self:setCurrentState("updateInFlight")
         local dir = vector(math.random() * 0.2, -1):normalized()
         self.velocity = dir * self.speed

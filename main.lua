@@ -20,7 +20,7 @@ sceneWidth, sceneHeight = 800, 600
 -------------------------------------------------------------------------------
 local canvas
 local mesh
-local shader = nil 
+local shader = nil
 local myGame
 
 local innerRun = love.run
@@ -50,39 +50,39 @@ local function getScreenMesh(canvas)
             255, 255, 255
         },
         {
-            love.window.getWidth(), 0, -- position
+            love.graphics.getWidth(), 0, -- position
             1, 0, -- texture coordinates
             255, 255, 255
         },
         {
-            love.window.getWidth(), love.window.getHeight(), -- position
+            love.graphics.getWidth(), love.graphics.getHeight(), -- position
             1, 1, -- texture coordinates
             255, 255, 255
         },
         {
-            0, love.window.getHeight(), -- position
+            0, love.graphics.getHeight(), -- position
             0, 1, -- texture coordinates
             255, 255, 255
         }
     }
-        
-    return love.graphics.newMesh(vertices, canvas, "fan")
+
+    return love.graphics.newMesh(vertices)
 end
 
 function love.load()
     print(string.format("setMode result: %s", result))
-    print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
+    print("width: "..love.graphics.getWidth()..", height:"..love.graphics.getHeight())
 
     local soundbox = SoundBox:new()
-    
+
     myGame = game:new(soundbox)
-    
+
     myGame:gotoState("menu")
-    
+
     canvas = love.graphics.newCanvas(sceneWidth, sceneHeight)
     canvas:setFilter('linear', 'linear')
     mesh = getScreenMesh(canvas)
-    
+
     local originalBlendMode = love.graphics.getBlendMode()
     print('originalBlendMode: '..originalBlendMode)
 
@@ -97,16 +97,16 @@ function love.update(dt)
 end
 
 function love.draw()
-    canvas:clear()
-    love.graphics.setCanvas(canvas)
+    --love.graphics.setCanvas(canvas)
+    love.graphics.clear()
     love.graphics.setBlendMode('alpha')
-    myGame:draw()    
-    love.graphics.setCanvas()
-    
-    love.graphics.setBlendMode('premultiplied')    
-    love.graphics.setShader(shader)
-    love.graphics.draw(mesh, 0, 0)
-    love.graphics.setShader()
+    myGame:draw()
+    --love.graphics.setCanvas()
+
+    --love.graphics.setBlendMode('alpha', 'premultiplied')
+    --love.graphics.setShader(shader)
+    --love.graphics.draw(mesh, 0, 0)
+    --love.graphics.setShader()
 end
 
 -- Non-player keypresses
