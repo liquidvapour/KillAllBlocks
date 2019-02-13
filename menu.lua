@@ -36,7 +36,9 @@ function menuState:enteredState()
     self.backg2 = Background:new(self.backgroundImage, 0, 65, 10, -1, 1)
     love.graphics.setBackgroundColor(0, 0, 0)
     
-    self.soundbox:startIntroBackingTrack()
+    if self.soudbox then
+        self.soundbox:startIntroBackingTrack()
+    end
 end
 
 function menuState:exitedState()

@@ -22,13 +22,13 @@ function Background:initialize(image, x, y, speed, vx, vy)
     self.image = image
     self.speed = speed or 0
     self.vx, self.vy = normalize(vx, vy)
-    self.quad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), width, height)
+    self.quad = love.graphics.newQuad(0, 0, love.graphics.getWidth(), love.graphics.getHeight(), width, height)
 end
 
 function Background:update(dt)
     self.x = (self.x + (self.speed * self.vx * dt)) % width
     self.y = (self.y + (self.speed * self.vy * dt)) % height
-    self.quad:setViewport(self.x, self.y, love.window.getWidth(), love.window.getHeight())
+    self.quad:setViewport(self.x, self.y, love.graphics.getWidth(), love.graphics.getHeight())
 end
 
 function Background:draw()

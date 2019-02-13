@@ -9,8 +9,8 @@ function SoundBox:initialize()
     self.explosion = love.audio.newSource("resources/sound/explosion01.wav", "static")    
     self.wobly = love.audio.newSource("resources/sound/wobly.wav", "static")    
     
-    self.introBackingTrack = love.audio.newSource("resources/sound/backingtracks/spacedeb_start.mod")
-    self.backingTrack = love.audio.newSource("resources/sound/backingtracks/spacedeb_gameplay.mod")
+    self.introBackingTrack = love.audio.newSource("resources/sound/backingtracks/spacedeb_start.mod", "static")
+    self.backingTrack = love.audio.newSource("resources/sound/backingtracks/spacedeb_gameplay.mod", "static")
 end
 
 local function playSource(source)

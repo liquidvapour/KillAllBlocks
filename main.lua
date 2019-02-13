@@ -28,17 +28,19 @@ local innerRun = love.run
 local profileingActive = false
 
 function love.run()
-    if profileingActive then
-        ProFi:start()
-        print("start run")
-        innerRun()
-        print("end run")
-        ProFi:stop()
-        ProFi:writeReport("_profile.txt")
-    else
-        print("start run")
-        innerRun()
-        print("end run")
+    return function()
+        if profileingActive then
+            ProFi:start()
+            print("start run")
+            innerRun()
+            print("end run")
+            ProFi:stop()
+            ProFi:writeReport("_profile.txt")
+        else
+            print("start run")
+            innerRun()()
+            print("end run")
+        end
     end
 end
 
@@ -47,33 +49,35 @@ local function getScreenMesh(canvas)
         {
             0, 0, -- position
             0, 0, -- texture coordinates
-            255, 255, 255
+            1, 1, 1
         },
         {
-            love.window.getWidth(), 0, -- position
+            love.graphics.getWidth(), 0, -- position
             1, 0, -- texture coordinates
-            255, 255, 255
+            1, 1, 1
         },
         {
-            love.window.getWidth(), love.window.getHeight(), -- position
+            love.graphics.getWidth(), love.graphics.getHeight(), -- position
             1, 1, -- texture coordinates
-            255, 255, 255
+            1, 1, 1
         },
         {
-            0, love.window.getHeight(), -- position
+            0, love.graphics.getHeight(), -- position
             0, 1, -- texture coordinates
-            255, 255, 255
+            1, 1, 1
         }
     }
         
-    return love.graphics.newMesh(vertices, canvas, "fan")
+    result = love.graphics.newMesh(vertices, "fan")
+    result:setTexture(canvas)
+    return result
 end
 
 function love.load()
     print(string.format("setMode result: %s", result))
-    print("width: "..love.window.getWidth()..", height:"..love.window.getHeight())
+    print("width: "..love.graphics.getWidth()..", height:"..love.graphics.getHeight())
 
-    local soundbox = SoundBox:new()
+    --local soundbox = SoundBox:new()
     
     myGame = game:new(soundbox)
     
@@ -86,13 +90,18 @@ function love.load()
     local originalBlendMode = love.graphics.getBlendMode()
     print('originalBlendMode: '..originalBlendMode)
 
-    shader = love.graphics.newShader('shaders/scanline-3x.frag')
+    --shader = love.graphics.newShader('shaders/scanline-3x.frag')
     --shader:send('inputSize', {sceneWidth, sceneHeight})
     --shader:send('outputSize', {outputWidth, outputHeight})
     --shader:send('textureSize', {sceneWidth, sceneHeight})
 end
 
+local minDT = 1/60
+local nextTime = love.timer.getTime() 
+
 function love.update(dt)
+    print("dt: "..(dt*1000))
+    nextTime = nextTime + minDT
     myGame:update(dt)
 end
 
@@ -123,6 +132,13 @@ end
 
 function love.draw()
     cleanDraw()
+    
+    local currentTime = love.timer.getTime()
+	if nextTime <= currentTime then
+		nextTime = currentTime
+    else
+        --love.timer.sleep(nextTime - currentTime)
+	end
 end
 
 -- Non-player keypresses
