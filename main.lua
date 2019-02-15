@@ -28,17 +28,18 @@ local innerRun = love.run
 local profileingActive = false
 
 function love.run()
+    run = innerRun()
     return function()
         if profileingActive then
             ProFi:start()
             print("start run")
-            innerRun()
+            run()
             print("end run")
             ProFi:stop()
             ProFi:writeReport("_profile.txt")
         else
             print("start run")
-            innerRun()()
+            run()
             print("end run")
         end
     end
@@ -106,8 +107,8 @@ function love.update(dt)
 end
 
 local function drawGameToCanvas()
-    canvas:clear()
     love.graphics.setCanvas(canvas)
+    love.graphics.clear()
     love.graphics.setBlendMode('alpha')
     myGame:draw()
     love.graphics.setCanvas()
@@ -116,7 +117,7 @@ end
 local function drawWithArtifacts()
     drawGameToCanvas()
     
-    love.graphics.setBlendMode('premultiplied')    
+    love.graphics.setBlendMode('alpha', 'premultiplied')    
     love.graphics.setShader(shader)
     love.graphics.draw(mesh, 0, 0)
     love.graphics.setShader()
@@ -125,7 +126,7 @@ end
 local function cleanDraw()
     drawGameToCanvas()
     
-    love.graphics.setBlendMode('premultiplied')    
+    love.graphics.setBlendMode('alpha', 'premultiplied')    
     love.graphics.draw(mesh, 0, 0)
     love.graphics.setShader()
 end

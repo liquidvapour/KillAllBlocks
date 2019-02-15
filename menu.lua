@@ -53,7 +53,7 @@ function menuState:update(dt)
     self.backg:update(dt)
     self.backg2:update(dt)
     
-    if love.keyboard.isDown(' ') then
+    if love.keyboard.isDown('space') then
         self:gotoState("ingame")
     end
     
