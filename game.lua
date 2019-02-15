@@ -3,6 +3,7 @@ local Stateful = require "lib.stateful"
 local ResourceManager = require "resourceManager"
 
 local HighScores = require "highScores"
+local NullSoundBox = require "nullSoundBox"
 
 local Game = Class("Game"):include(Stateful)
 
@@ -27,11 +28,12 @@ function Game:initialize(soundbox)
     self.resourceManager = ResourceManager:new()
     self.scores = HighScores:new(self.resourceManager)
     
-    self.soundbox = soundbox
     if soundbox then
         print("Game initialized with soundbox")
+        self.soundbox = soundbox
     else
         print("Game initialized with out soundbox")
+        self.soundbox = new NullSoundBox()
     end
 end
 
