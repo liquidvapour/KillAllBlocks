@@ -27,14 +27,8 @@ function Game:initialize(soundbox)
     self.useMouse = false
     self.resourceManager = ResourceManager:new()
     self.scores = HighScores:new(self.resourceManager)
-    
-    if soundbox then
-        print("Game initialized with soundbox")
-        self.soundbox = soundbox
-    else
-        print("Game initialized with out soundbox")
-        self.soundbox = new NullSoundBox()
-    end
+
+    self.soundbox = soundbox
 end
 
 function Game:draw()

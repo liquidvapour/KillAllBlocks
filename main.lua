@@ -9,6 +9,7 @@ require "gameover"
 require "captureName"
 
 local SoundBox = require "soundbox"
+local NullSoundBox = require "nullSoundbox"
 local ProFi = require "lib/ProFi"
 -------------------------------------------------------------------------------
 -- Globals
@@ -23,27 +24,27 @@ local mesh
 local shader = nil 
 local myGame
 
-local innerRun = love.run
+-- local innerRun = love.run
 
 local profileingActive = false
 
-function love.run()
-    run = innerRun()
-    return function()
-        if profileingActive then
-            ProFi:start()
-            print("start run")
-            run()
-            print("end run")
-            ProFi:stop()
-            ProFi:writeReport("_profile.txt")
-        else
-            print("start run")
-            run()
-            print("end run")
-        end
-    end
-end
+-- function love.run()
+--     run = innerRun()
+--     return function()
+--         if profileingActive then
+--             ProFi:start()
+--             print("start run")
+--             run()
+--             print("end run")
+--             ProFi:stop()
+--             ProFi:writeReport("_profile.txt")
+--         else
+--             print("start run")
+--             run()
+--             print("end run")
+--         end
+--     end
+-- end
 
 local function getScreenMesh(canvas)
     local vertices = {
@@ -79,7 +80,10 @@ function love.load()
     print("width: "..love.graphics.getWidth()..", height:"..love.graphics.getHeight())
 
     --local soundbox = SoundBox:new()
-    
+    local soundbox = NullSoundBox:new()
+
+    print('sandbox: '..soundbox)
+
     myGame = game:new(soundbox)
     
     myGame:gotoState("menu")

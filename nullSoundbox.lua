@@ -32,4 +32,8 @@ end
 function NullSoundBox:gameover()
 end
 
+function NullSoundBox:__concat()
+    return "NullSoundBox instance"
+end
+
 return NullSoundBox 
